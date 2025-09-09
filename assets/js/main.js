@@ -63,14 +63,19 @@
   }
   // Check if the user preference is already stored in local storage
   $(document).ready(function () {
-    const isDarkTheme = localStorage.getItem("darkTheme") === "true";
+    const darkThemePref = localStorage.getItem("darkTheme");
+    const isDarkTheme = darkThemePref === null ? true : darkThemePref === "true";
 
-    // Apply the dark theme if the preference is set to true
+    // Apply the dark theme if the preference is set to true or no preference exists
     if (isDarkTheme) {
       $("body").addClass("dark-theme");
       darktoggle.src = "assets/img/icon/sun-icon.png";
       home1bgimg.style.backgroundImage =
         "url('assets/img/bg/page-bg-dark-2.jpg')";
+      // Set the preference if it doesn't exist
+      if (darkThemePref === null) {
+        localStorage.setItem("darkTheme", "true");
+      }
     }
 
     // Attach click event to the specified div

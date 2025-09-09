@@ -3112,7 +3112,19 @@ textarea:focus::placeholder {
 }
 .bostami-what-do-item .text p {
   margin-bottom: 0;
-  line-height: 30px;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.bostami-what-do-item:hover .text p {
+  -webkit-line-clamp: unset;
+  overflow: visible;
+  display: block;
 }
 
 .bostami-page-wrap .client-2-wrap {
