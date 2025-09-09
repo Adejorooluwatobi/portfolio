@@ -62,6 +62,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
             }
+            
+            // Set active menu based on current page
+            const currentPage = window.location.pathname.split('/').pop();
+            $('.bastami-main-menu li').removeClass('active');
+            
+            if (currentPage === 'index.html' || currentPage === '') {
+                $('.menu-about').addClass('active');
+            } else if (currentPage === 'portfolio.html') {
+                $('.menu-works').addClass('active');
+            } else if (currentPage === 'resume.html') {
+                $('.menu-resume').addClass('active');
+            } else if (currentPage === 'blog.html') {
+                $('.menu-blogs').addClass('active');
+            } else if (currentPage === 'contact.html') {
+                $('.menu-contact').addClass('active');
+            }
         }
     }
 
