@@ -2203,7 +2203,7 @@ textarea:focus::placeholder {
 }
 
 .home-3 .bostami-header-area {
-  margin-bottom: 240px;
+  margin-bottom: 5px;
   background-color: transparent;
 }
 @media only screen and (min-width: 1200px) and (max-width: 1399px),
@@ -2211,7 +2211,7 @@ textarea:focus::placeholder {
   only screen and (min-width: 768px) and (max-width: 991px),
   (max-width: 767px) {
   .home-3 .bostami-header-area {
-    margin-bottom: 40px;
+    margin-bottom: 10px;
   }
 }
 .home-3 .bostami-header-area .bostami-header-wrap {
