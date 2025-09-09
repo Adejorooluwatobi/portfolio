@@ -79,38 +79,36 @@
   // dark mood end
 
   //  client slider start
-  if (jQuery(".client_slide_active").length > 0) {
-    let acooterbrand = new Swiper(".client_slide_active", {
-      slidesPerView: 4,
-      loop: true,
-      rtl: false,
-      infinite: true,
-      autoplay: {
-        delay: 4000,
-      },
-
-      breakpoints: {
-        0: {
-          slidesPerView: 2,
-        },
-        480: {
-          slidesPerView: 2,
-        },
-        576: {
-          slidesPerView: 2,
-        },
-        768: {
-          slidesPerView: 3,
-        },
-        992: {
-          slidesPerView: 4,
-        },
-        1200: {
-          slidesPerView: 5,
-        },
-      },
-    });
-  }
+  $(window).on('load', function() {
+    setTimeout(function() {
+      if ($(".client_slide_active").length > 0) {
+        new Swiper(".client_slide_active", {
+          slidesPerView: 'auto',
+          loop: true,
+          autoplay: {
+            delay: 2000,
+            disableOnInteraction: false,
+          },
+          spaceBetween: 20,
+          centeredSlides: false,
+          breakpoints: {
+            320: {
+              slidesPerView: 2,
+            },
+            768: {
+              slidesPerView: 3,
+            },
+            1024: {
+              slidesPerView: 4,
+            },
+            1200: {
+              slidesPerView: 5,
+            },
+          },
+        });
+      }
+    }, 500);
+  });
   // client slider end
 
   // portfolio fillter start

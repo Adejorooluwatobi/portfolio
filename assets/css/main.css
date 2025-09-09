@@ -3018,6 +3018,37 @@ textarea:focus::placeholder {
   text-align: center !important;
 }
 
+.bostami-client-slider {
+  width: 100%;
+  overflow: hidden;
+}
+
+.bostami-client-slider .swiper-container {
+  width: 100%;
+  height: auto;
+}
+
+.bostami-client-slider .swiper-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.bostami-client-slider-logo {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.client_slide_active .swiper-slide {
+  width: auto !important;
+  flex-shrink: 0;
+}
+
+.client_slide_active {
+  overflow: visible;
+}
+
 /*
 ************
 *************************
