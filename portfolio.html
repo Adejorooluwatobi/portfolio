@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Featured Works & Projects — Oluwatobi Adejoro</title>
+    <meta name="description" content="Production applications, client ecosystems, and web systems engineered by Oluwatobi Adejoro, Senior Fullstack Software Engineer."/>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon2.jpg"/>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+    
+    <!-- Theme Stylesheet & Anti-flicker Init -->
+    <link rel="stylesheet" href="assets/css/theme.css"/>
+    <script>
+        if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <!-- Tailwind CSS with custom theme config matching design reference -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "surface": "var(--color-surface)",
+                    "surface-card": "var(--color-surface-card)",
+                    "surface-container": "var(--color-surface-container)",
+                    "surface-container-low": "var(--color-surface-container-low)",
+                    "surface-container-lowest": "var(--color-surface-container-lowest)",
+                    "surface-container-high": "var(--color-surface-container-high)",
+                    "surface-container-highest": "var(--color-surface-container-highest)",
+                    "on-surface": "var(--color-on-surface)",
+                    "on-surface-variant": "var(--color-on-surface-variant)",
+                    "text-primary": "var(--color-text-primary)",
+                    "text-secondary": "var(--color-text-secondary)",
+                    "text-muted": "var(--color-text-muted)",
+                    "primary": "var(--color-primary)",
+                    "primary-container": "var(--color-primary-container)",
+                    "on-primary-container": "var(--color-on-primary-container)",
+                    "secondary": "var(--color-secondary)",
+                    "tertiary": "var(--color-tertiary)",
+                    "tertiary-container": "var(--color-tertiary-container)",
+                    "border-subtle": "var(--color-border-subtle)",
+                    "border-accent": "var(--color-border-accent)",
+                    "error": "var(--color-error)"
+                },
+                fontFamily: {
+                    "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+                    "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+                    "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+                    "display-hero": ["Plus Jakarta Sans", "sans-serif"],
+                    "body-lg": ["Inter", "sans-serif"],
+                    "body-md": ["Inter", "sans-serif"],
+                    "body-sm": ["Inter", "sans-serif"],
+                    "code-md": ["JetBrains Mono", "monospace"],
+                    "code-sm": ["JetBrains Mono", "monospace"],
+                    "label-badge": ["JetBrains Mono", "monospace"]
+                }
+            }
+        }
+    };
+    </script>
+    <style>
+        @layer base {
+            html, body { margin: 0; padding: 0; scroll-behavior: smooth; }
+            ::-webkit-scrollbar { width: 8px; }
+            ::-webkit-scrollbar-track { background: var(--color-surface-container-lowest); }
+            ::-webkit-scrollbar-thumb { background: var(--color-surface-container-high); border-radius: 4px; }
+            ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
+
+    <!-- Centralized Persistent Header & Mobile Drawer -->
+    <div id="site-header"></div>
+
+    <!-- Main Portfolio Page Content -->
+    <main class="w-full pt-28 pb-20 flex-grow">
+        <div class="relative w-full overflow-hidden">
+            
+            <!-- Ambient Violet & Emerald Glow -->
+            <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-primary-container/15 rounded-full blur-[140px] pointer-events-none"></div>
+            <div class="absolute top-96 right-10 w-[450px] h-[280px] bg-secondary/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 space-y-12">
+                
+                <!-- Section Header & Category Filters -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-border-subtle">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high border border-border-subtle mb-3">
+                            <span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+                            <span class="font-label-badge text-xs text-primary uppercase">Engineered Implementations</span>
+                        </div>
+                        <h1 class="font-headline-lg text-3xl sm:text-4xl text-text-primary font-bold tracking-tight">Featured Real-World Works</h1>
+                        <p class="font-body-md text-sm sm:text-base text-text-secondary mt-2 max-w-2xl">
+                            Verified client platforms, scalable web architectures, and production systems engineered for responsive reliability.
+                        </p>
+                    </div>
+
+                    <!-- Category Filter Buttons -->
+                    <div class="flex items-center gap-2">
+                        <span class="font-code-sm text-xs text-text-muted mr-1">Filter:</span>
+                        <button type="button" class="project-filter-btn px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-code-sm text-xs font-semibold transition-all" data-filter="all">All</button>
+                        <button type="button" class="project-filter-btn px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-code-sm text-xs transition-all border border-border-subtle" data-filter="fullstack">Fullstack</button>
+                        <button type="button" class="project-filter-btn px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-code-sm text-xs transition-all border border-border-subtle" data-filter="frontend">Frontend</button>
+                        <button type="button" class="project-filter-btn px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-code-sm text-xs transition-all border border-border-subtle" data-filter="ai-backend">AI & Backend</button>
+                    </div>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="projects-grid">
+                    
+                    <!-- Project 1: TSL Hub Law Firm -->
+                    <div class="project-item fullstack frontend bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300" data-category="fullstack">
+                        <div class="h-64 overflow-hidden relative bg-surface-container-high flex items-center justify-center p-8">
+                            <img class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl" src="assets/img/work/logo (1).png" alt="TSL Hub Law Firm Platform Logo"/>
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
+                            <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20 backdrop-blur-md">Legal Tech • Fullstack</span>
+                            <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-secondary border border-secondary/20 backdrop-blur-md">2023 — 2024</span>
+                        </div>
+                        <div class="p-7 flex flex-col flex-grow">
+                            <div class="flex items-center justify-between mb-2">
+                                <h2 class="font-headline-md text-xl text-text-primary font-bold">TSL Hub Law Firm Platform</h2>
+                            </div>
+                            <p class="font-body-md text-sm text-text-secondary mb-5 leading-relaxed">
+                                Corporate legal practice digital ecosystem engineered for TSL Hub. Delivers responsive practice area directories, client consultation inquiry workflows, accessible typography, and SEO-optimized web performance.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">HTML5 / Semantic</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">CSS3 / SASS</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">JavaScript</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Responsive UI</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">SEO Tuning</span>
+                            </div>
+                            <div class="mt-auto pt-4 flex items-center justify-between border-t border-border-subtle">
+                                <button type="button" onclick="openProjectModal('tslhub')" class="flex items-center gap-1.5 font-code-sm text-xs text-primary hover:text-surface-tint font-medium">
+                                    <span class="material-symbols-outlined text-[16px]">visibility</span>
+                                    <span>Case Study Breakdown</span>
+                                </button>
+                                <a class="flex items-center gap-1.5 font-code-sm text-xs text-secondary hover:underline font-medium" href="https://tslhub.org/index.html" rel="noopener noreferrer" target="_blank">
+                                    <span>Inspect Live</span>
+                                    <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2: Comza Africa Commercial Platform -->
+                    <div class="project-item fullstack frontend bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-secondary/50 transition-all duration-300" data-category="fullstack">
+                        <div class="h-64 overflow-hidden relative bg-surface-container-high flex items-center justify-center p-8">
+                            <img class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl" src="assets/img/work/comza.png" alt="Comza Africa Platform Logo"/>
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
+                            <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-secondary border border-secondary/20 backdrop-blur-md">Commercial Ecosystem</span>
+                            <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-secondary border border-secondary/20 backdrop-blur-md">2023 — 2024</span>
+                        </div>
+                        <div class="p-7 flex flex-col flex-grow">
+                            <div class="flex items-center justify-between mb-2">
+                                <h2 class="font-headline-md text-xl text-text-primary font-bold">Comza Africa Commercial Ecosystem</h2>
+                            </div>
+                            <p class="font-body-md text-sm text-text-secondary mb-5 leading-relaxed">
+                                Pan-African commercial venture digital ecosystem built to present multi-sector trading, modern logistics, and investment opportunities with high visual authority and responsive customer interaction channels.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">JavaScript ES6+</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Modern UI/UX</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Interactive Catalog</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Responsive Layout</span>
+                            </div>
+                            <div class="mt-auto pt-4 flex items-center justify-between border-t border-border-subtle">
+                                <button type="button" onclick="openProjectModal('comza')" class="flex items-center gap-1.5 font-code-sm text-xs text-primary hover:text-surface-tint font-medium">
+                                    <span class="material-symbols-outlined text-[16px]">visibility</span>
+                                    <span>Case Study Breakdown</span>
+                                </button>
+                                <a class="flex items-center gap-1.5 font-code-sm text-xs text-secondary hover:underline font-medium" href="https://www.comzafrica.com/index.html" rel="noopener noreferrer" target="_blank">
+                                    <span>Inspect Live</span>
+                                    <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3: AI Productivity Toolkit (Doyin Chris) -->
+                    <div class="project-item ai-backend frontend bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-tertiary/50 transition-all duration-300" data-category="ai-backend">
+                        <div class="h-64 overflow-hidden relative bg-surface-container-high flex items-center justify-center p-8">
+                            <img class="max-h-full max-w-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-xl drop-shadow-2xl" src="assets/img/work/AI-Powerd.jpg" alt="AI Productivity Toolkit"/>
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
+                            <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-tertiary border border-tertiary/20 backdrop-blur-md">AI & Web Application</span>
+                            <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-secondary border border-secondary/20 backdrop-blur-md">2024</span>
+                        </div>
+                        <div class="p-7 flex flex-col flex-grow">
+                            <div class="flex items-center justify-between mb-2">
+                                <h2 class="font-headline-md text-xl text-text-primary font-bold">AI Productivity Toolkit (Doyin Chris)</h2>
+                            </div>
+                            <p class="font-body-md text-sm text-text-secondary mb-5 leading-relaxed">
+                                Dark-themed AI productivity suite providing automated prompt engineering tools, content synthesis helpers, and tactile utility widgets designed for high-focus digital workflows.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">AI Workflows</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">JavaScript</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Tactile Dark UI</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Modern CSS</span>
+                            </div>
+                            <div class="mt-auto pt-4 flex items-center justify-between border-t border-border-subtle">
+                                <button type="button" onclick="openProjectModal('aitoolkit')" class="flex items-center gap-1.5 font-code-sm text-xs text-primary hover:text-surface-tint font-medium">
+                                    <span class="material-symbols-outlined text-[16px]">visibility</span>
+                                    <span>Case Study Breakdown</span>
+                                </button>
+                                <a class="flex items-center gap-1.5 font-code-sm text-xs text-secondary hover:underline font-medium" href="https://doyincl.github.io/Ai/" rel="noopener noreferrer" target="_blank">
+                                    <span>Inspect Live</span>
+                                    <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 4: Microservices API Gateway & Distributed Telemetry -->
+                    <div class="project-item ai-backend fullstack bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300" data-category="ai-backend">
+                        <div class="h-64 overflow-hidden relative bg-surface-container-high flex flex-col items-center justify-center p-8 text-center">
+                            <div class="w-16 h-16 rounded-2xl bg-primary-container/20 text-primary flex items-center justify-center mb-3 border border-primary/20">
+                                <span class="material-symbols-outlined text-[32px]">dns</span>
+                            </div>
+                            <span class="font-headline-sm text-text-primary font-bold">Distributed Reverse Proxy & Auth Gateway</span>
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
+                            <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20 backdrop-blur-md">Cloud Architecture</span>
+                            <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-secondary border border-secondary/20 backdrop-blur-md">2023 — 2024</span>
+                        </div>
+                        <div class="p-7 flex flex-col flex-grow">
+                            <div class="flex items-center justify-between mb-2">
+                                <h2 class="font-headline-md text-xl text-text-primary font-bold">Distributed Microservices Gateway</h2>
+                            </div>
+                            <p class="font-body-md text-sm text-text-secondary mb-5 leading-relaxed">
+                                Central reverse proxy and authentication gateway engineered with Node.js and NestJS. Implements token rotation (JWT), rate limiting, payload validation, and sub-50ms caching using Redis and PostgreSQL.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">NestJS</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Node.js</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Redis Caching</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">PostgreSQL</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Docker</span>
+                            </div>
+                            <div class="mt-auto pt-4 flex items-center justify-between border-t border-border-subtle">
+                                <a class="flex items-center gap-1.5 font-code-sm text-xs text-primary hover:text-surface-tint font-medium" href="https://github.com" rel="noopener noreferrer" target="_blank">
+                                    <span class="material-symbols-outlined text-[16px]">code</span>
+                                    <span>Source Repository</span>
+                                </a>
+                                <a class="flex items-center gap-1.5 font-code-sm text-xs text-secondary hover:underline font-medium" href="articles.html">
+                                    <span>Read Technical Article</span>
+                                    <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Case Study Interactive Modal / Drawer -->
+    <div id="case-study-modal" class="fixed inset-0 bg-surface-container-lowest/80 backdrop-blur-md z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4 sm:p-6">
+        <div class="bg-surface-card border border-border-accent rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl backdrop-blur-2xl">
+            <button id="case-study-close" type="button" class="absolute top-5 right-5 w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-text-muted hover:text-text-primary transition-colors border border-border-subtle" aria-label="Close Case Study">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+            <div id="case-study-content">
+                <!-- Injected via portfolio-core.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Centralized Persistent Footer -->
+    <div id="site-footer"></div>
+
+    <!-- Core Interactive Scripts -->
+    <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/components.js"></script>
+    <script src="assets/js/portfolio-core.js"></script>
+</body>
+</html>

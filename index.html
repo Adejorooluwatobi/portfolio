@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Oluwatobi Adejoro — Senior Fullstack Software Engineer</title>
+    <meta name="description" content="Portfolio of Oluwatobi Adejoro, a passionate and detail-oriented Fullstack Software Engineer specializing in React, Node.js, NestJS, Angular, and ASP.NET Core."/>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon2.jpg"/>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+    
+    <!-- Theme Stylesheet & Anti-flicker Init -->
+    <link rel="stylesheet" href="assets/css/theme.css"/>
+    <script>
+        if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <!-- Tailwind CSS with custom theme config matching design reference -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "surface": "var(--color-surface)",
+                    "surface-card": "var(--color-surface-card)",
+                    "surface-container": "var(--color-surface-container)",
+                    "surface-container-low": "var(--color-surface-container-low)",
+                    "surface-container-lowest": "var(--color-surface-container-lowest)",
+                    "surface-container-high": "var(--color-surface-container-high)",
+                    "surface-container-highest": "var(--color-surface-container-highest)",
+                    "on-surface": "var(--color-on-surface)",
+                    "on-surface-variant": "var(--color-on-surface-variant)",
+                    "text-primary": "var(--color-text-primary)",
+                    "text-secondary": "var(--color-text-secondary)",
+                    "text-muted": "var(--color-text-muted)",
+                    "primary": "var(--color-primary)",
+                    "primary-container": "var(--color-primary-container)",
+                    "on-primary-container": "var(--color-on-primary-container)",
+                    "secondary": "var(--color-secondary)",
+                    "tertiary": "var(--color-tertiary)",
+                    "tertiary-container": "var(--color-tertiary-container)",
+                    "border-subtle": "var(--color-border-subtle)",
+                    "border-accent": "var(--color-border-accent)",
+                    "error": "var(--color-error)"
+                },
+                fontFamily: {
+                    "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+                    "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+                    "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+                    "display-hero": ["Plus Jakarta Sans", "sans-serif"],
+                    "body-lg": ["Inter", "sans-serif"],
+                    "body-md": ["Inter", "sans-serif"],
+                    "body-sm": ["Inter", "sans-serif"],
+                    "code-md": ["JetBrains Mono", "monospace"],
+                    "code-sm": ["JetBrains Mono", "monospace"],
+                    "label-badge": ["JetBrains Mono", "monospace"]
+                }
+            }
+        }
+    };
+    </script>
+    <style>
+        @layer base {
+            html, body { margin: 0; padding: 0; scroll-behavior: smooth; }
+            ::-webkit-scrollbar { width: 8px; }
+            ::-webkit-scrollbar-track { background: var(--color-surface-container-lowest); }
+            ::-webkit-scrollbar-thumb { background: var(--color-surface-container-high); border-radius: 4px; }
+            ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
+
+    <!-- Centralized Persistent Header & Mobile Drawer -->
+    <div id="site-header"></div>
+
+    <!-- Main Page Content -->
+    <main class="w-full pt-28 pb-20 flex-grow">
+        <div class="relative w-full overflow-hidden">
+            
+            <!-- Ambient Violet & Cyan Background Glow -->
+            <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-primary-container/15 rounded-full blur-[140px] pointer-events-none"></div>
+            <div class="absolute top-96 right-10 w-[450px] h-[280px] bg-tertiary-container/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <!-- Hero Section -->
+            <section class="max-w-7xl mx-auto px-6 lg:px-12 pt-4 pb-12 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    
+                    <!-- Left: Real Developer Identity Card -->
+                    <div class="lg:col-span-4 w-full">
+                        <div class="bg-surface-card rounded-2xl p-6 backdrop-blur-2xl border border-border-subtle shadow-2xl flex flex-col items-center text-center relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-gradient-to-b from-primary-container/10 via-transparent to-transparent pointer-events-none"></div>
+                            
+                            <!-- Avatar Frame with Ambient Violet Ring -->
+                            <div class="relative mb-5 mt-2">
+                                <div class="w-36 h-36 rounded-2xl overflow-hidden p-1 bg-gradient-to-tr from-primary-container via-surface-container-high to-secondary shadow-xl">
+                                    <img class="w-full h-full object-cover rounded-xl" src="assets/img/parsonal-info/oluwatobi-img.jpg" alt="Oluwatobi Adejoro - Senior Fullstack Software Engineer"/>
+                                </div>
+                                <span class="absolute bottom-1 right-1 w-4 h-4 bg-secondary rounded-full ring-4 ring-surface" title="Currently Available for Opportunities"></span>
+                            </div>
+
+                            <h1 class="font-headline-md text-2xl text-text-primary font-bold mb-1">Oluwatobi Adejoro</h1>
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high border border-border-subtle mb-4">
+                                <span class="font-code-sm text-xs text-primary font-semibold">Senior Fullstack Engineer</span>
+                            </div>
+
+                            <!-- Social Connectivity -->
+                            <div class="flex items-center justify-center gap-2 mb-6">
+                                <a class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-border-subtle" href="https://github.com" rel="noopener noreferrer" target="_blank" title="GitHub">
+                                    <span class="material-symbols-outlined text-[20px]">terminal</span>
+                                </a>
+                                <a class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-border-subtle" href="https://www.linkedin.com/in/adejoro-oluwatobi-6009411b5/" rel="noopener noreferrer" target="_blank" title="LinkedIn">
+                                    <span class="material-symbols-outlined text-[20px]">share</span>
+                                </a>
+                                <a class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-border-subtle" href="https://x.com/tgold_adejoro" rel="noopener noreferrer" target="_blank" title="Twitter / X">
+                                    <span class="material-symbols-outlined text-[20px]">chat</span>
+                                </a>
+                                <button onclick="copyEmailToClipboard('Adejorotgold1@yahoo.com')" class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-border-subtle" title="Copy Email">
+                                    <span class="material-symbols-outlined text-[20px]">mail</span>
+                                </button>
+                            </div>
+
+                            <!-- Personal Telemetry -->
+                            <div class="w-full bg-surface-container-lowest/80 rounded-xl p-4 text-left space-y-3 border border-border-subtle">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-code-sm text-text-muted flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-[16px] text-primary">location_on</span> Base
+                                    </span>
+                                    <span class="font-code-sm text-text-primary font-medium">Lagos / Remote Global</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-code-sm text-text-muted flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-[16px] text-secondary">verified</span> Status
+                                    </span>
+                                    <span class="font-code-sm text-secondary font-medium">Open to Offers</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-code-sm text-text-muted flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-[16px] text-tertiary">schedule</span> Response
+                                    </span>
+                                    <span class="font-code-sm text-text-primary">&lt; 24 Hours</span>
+                                </div>
+                            </div>
+
+                            <!-- Direct Action -->
+                            <a class="mt-5 w-full py-2.5 px-4 rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-sm font-semibold flex items-center justify-center gap-2 hover:bg-primary hover:text-surface transition-all shadow-lg" href="contact.html">
+                                <span class="material-symbols-outlined text-[18px]">send</span>
+                                <span>Initiate Collaboration</span>
+                            </a>
+                        </div>
+
+                        <!-- Micro Metrics -->
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+                            <div class="bg-surface-card rounded-xl p-4 backdrop-blur-md border border-border-subtle">
+                                <span class="font-label-badge text-[11px] text-text-muted uppercase tracking-wider block mb-1">Tenure</span>
+                                <div class="font-display-hero text-2xl font-bold text-primary">4+ <span class="font-code-sm text-xs text-text-secondary font-normal">Years</span></div>
+                                <span class="font-code-sm text-xs text-text-secondary">Production Systems</span>
+                            </div>
+                            <div class="bg-surface-card rounded-xl p-4 backdrop-blur-md border border-border-subtle">
+                                <span class="font-label-badge text-[11px] text-text-muted uppercase tracking-wider block mb-1">Shipped</span>
+                                <div class="font-display-hero text-2xl font-bold text-secondary">25+ <span class="font-code-sm text-xs text-text-secondary font-normal">Projects</span></div>
+                                <span class="font-code-sm text-xs text-text-secondary">Web & Cloud APIs</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Developer Mission & Architectural Biography -->
+                    <div class="lg:col-span-8 space-y-6">
+                        <div class="bg-surface-card rounded-2xl p-8 lg:p-10 backdrop-blur-2xl border border-border-subtle shadow-2xl relative overflow-hidden">
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high border border-border-subtle mb-4">
+                                <span class="material-symbols-outlined text-primary text-[16px]">code_blocks</span>
+                                <span class="font-label-badge text-xs text-primary uppercase">Fullstack Engineering</span>
+                            </div>
+
+                            <h2 class="font-headline-lg text-2xl sm:text-3xl lg:text-4xl text-text-primary font-bold mb-4 tracking-tight leading-snug">
+                                Architecting Scalable, User-Centric Digital Experiences
+                            </h2>
+
+                            <p class="font-body-lg text-base sm:text-lg text-text-primary mb-5 leading-relaxed font-normal">
+                                Passionate and detail-oriented Fullstack Developer with 4 years of experience in architecting, developing, and deploying robust, user-centric web applications. Proficient in both frontend and backend technologies, I specialize in crafting seamless digital experiences from concept to execution.
+                            </p>
+
+                            <div class="space-y-4 text-text-secondary font-body-md text-sm sm:text-base leading-relaxed">
+                                <p>
+                                    On the frontend, I leverage modern frameworks like <strong class="text-text-primary font-semibold">React</strong> and <strong class="text-text-primary font-semibold">Angular</strong> to translate complex design concepts into responsive, accessible, and high-performance user interfaces. My expertise ensures optimal user experience across diverse devices and browsers.
+                                </p>
+                                <p>
+                                    For the backend, I possess strong capabilities in <strong class="text-text-primary font-semibold">Node.js</strong>, utilizing frameworks such as <strong class="text-text-primary font-semibold">Express.js</strong> and <strong class="text-text-primary font-semibold">NestJS</strong> to build scalable and efficient APIs and server-side logic. Additionally, I am proficient in <strong class="text-text-primary font-semibold">ASP.NET Core</strong>, enabling me to engineer dependable enterprise applications across diverse architectural patterns.
+                                </p>
+                            </div>
+
+                            <!-- Action Cluster -->
+                            <div class="flex flex-wrap items-center gap-3 pt-6 mt-2 border-t border-border-subtle">
+                                <a class="px-5 py-2.5 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-sm font-semibold flex items-center gap-2 hover:bg-primary hover:text-surface transition-all shadow-md" href="portfolio.html">
+                                    <span class="material-symbols-outlined text-[20px]">layers</span>
+                                    <span>Explore Featured Works</span>
+                                </a>
+                                <a class="px-5 py-2.5 rounded-lg bg-surface-container-high text-text-primary hover:bg-surface-container-highest transition-colors font-headline-sm text-sm font-medium flex items-center gap-2 border border-border-subtle" href="resume.html">
+                                    <span class="material-symbols-outlined text-[20px]">terminal</span>
+                                    <span>Inspect Tech Stack</span>
+                                </a>
+                                <a class="px-5 py-2.5 rounded-lg bg-surface-container-low text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors font-headline-sm text-sm font-medium flex items-center gap-2 border border-border-subtle" href="resume.html#experience">
+                                    <span class="material-symbols-outlined text-[20px]">history_edu</span>
+                                    <span>Track Record</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Architecture & Code Philosophy Badges -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-surface-card rounded-xl p-5 border border-border-subtle shadow-sm hover:border-primary/40 transition-colors">
+                                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary mb-3">
+                                    <span class="material-symbols-outlined text-[22px]">speed</span>
+                                </div>
+                                <h3 class="font-headline-sm text-base text-text-primary font-semibold mb-1">Performance First</h3>
+                                <p class="font-body-sm text-xs text-text-muted leading-relaxed">Sub-second latencies, tree-shaken bundles, optimized SQL queries & Redis caching.</p>
+                            </div>
+                            <div class="bg-surface-card rounded-xl p-5 border border-border-subtle shadow-sm hover:border-secondary/40 transition-colors">
+                                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary mb-3">
+                                    <span class="material-symbols-outlined text-[22px]">security</span>
+                                </div>
+                                <h3 class="font-headline-sm text-base text-text-primary font-semibold mb-1">Enterprise Grade</h3>
+                                <p class="font-body-sm text-xs text-text-muted leading-relaxed">Strict typing, JWT/OAuth2 mechanisms, role-based access, and clean domain design.</p>
+                            </div>
+                            <div class="bg-surface-card rounded-xl p-5 border border-border-subtle shadow-sm hover:border-tertiary/40 transition-colors">
+                                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-tertiary mb-3">
+                                    <span class="material-symbols-outlined text-[22px]">devices</span>
+                                </div>
+                                <h3 class="font-headline-sm text-base text-text-primary font-semibold mb-1">Fluid UI / UX</h3>
+                                <p class="font-body-sm text-xs text-text-muted leading-relaxed">Responsive precision, accessible semantic layouts, and tactile motion design.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- What I Do (Core Competencies) -->
+            <section class="max-w-7xl mx-auto px-6 lg:px-12 py-12 w-full">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                    <div>
+                        <span class="font-label-badge text-xs text-primary uppercase tracking-widest block mb-2 font-semibold">Core Competencies</span>
+                        <h2 class="font-headline-lg text-2xl sm:text-3xl text-text-primary font-bold">What I Do</h2>
+                    </div>
+                    <p class="font-body-sm text-xs sm:text-sm text-text-muted max-w-md">
+                        Bridging the gap between polished user interfaces, high-throughput microservices, and robust production-ready cloud systems.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Card 1: UI/UX Engineering -->
+                    <div class="bg-surface-card rounded-2xl p-8 backdrop-blur-xl border border-border-subtle relative overflow-hidden group hover:border-primary/40 transition-all">
+                        <div class="flex items-start justify-between mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-primary-container/20 text-primary flex items-center justify-center border border-primary/20">
+                                <span class="material-symbols-outlined text-[28px]">palette</span>
+                            </div>
+                            <span class="font-code-sm text-xs text-text-muted">01 // FRONTEND</span>
+                        </div>
+                        <h3 class="font-headline-md text-xl text-text-primary font-semibold mb-3">UI / UX Engineering</h3>
+                        <p class="font-body-md text-sm text-text-secondary leading-relaxed mb-6">
+                            My comprehensive skill set spans HTML, modern CSS, JavaScript, and encompasses strong UI/UX principles, allowing me to bridge the gap between design and development effectively. I am dedicated to optimizing application performance, ensuring cross-browser compatibility, and maintaining clean, maintainable code.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">React 18</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">Angular 16</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">Tailwind CSS</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">Accessibility (a11y)</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Fullstack App Development -->
+                    <div class="bg-surface-card rounded-2xl p-8 backdrop-blur-xl border border-border-subtle relative overflow-hidden group hover:border-secondary/40 transition-all">
+                        <div class="flex items-start justify-between mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center border border-secondary/20">
+                                <span class="material-symbols-outlined text-[28px]">widgets</span>
+                            </div>
+                            <span class="font-code-sm text-xs text-text-muted">02 // SYSTEMS</span>
+                        </div>
+                        <h3 class="font-headline-md text-xl text-text-primary font-semibold mb-3">Fullstack App Development</h3>
+                        <p class="font-body-md text-sm text-text-secondary leading-relaxed mb-6">
+                            I contribute engineering expertise to innovative projects within growth-oriented organizations, collaborating with cross-functional teams to deliver impactful solutions and continuously enhance user experiences. My commitment to continuous learning drives my pursuit of engineering excellence in every deployment.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">TypeScript</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">Next.js</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">State Architecture</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">Micro-frontends</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Backend & API Architecture -->
+                    <div class="bg-surface-card rounded-2xl p-8 backdrop-blur-xl border border-border-subtle relative overflow-hidden group hover:border-tertiary/40 transition-all">
+                        <div class="flex items-start justify-between mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-tertiary-container/40 text-tertiary flex items-center justify-center border border-tertiary/20">
+                                <span class="material-symbols-outlined text-[28px]">dns</span>
+                            </div>
+                            <span class="font-code-sm text-xs text-text-muted">03 // INFRASTRUCTURE</span>
+                        </div>
+                        <h3 class="font-headline-md text-xl text-text-primary font-semibold mb-3">API & Backend Architecture</h3>
+                        <p class="font-body-md text-sm text-text-secondary leading-relaxed mb-6">
+                            Possessing deep capabilities in Node.js, utilizing Express.js and NestJS to build scalable, fault-tolerant microservices and asynchronous queue pipelines. Concurrently proficient in ASP.NET Core for building secure enterprise data endpoints and multi-tier business logic engines.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">NestJS</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">Node.js / Express</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">ASP.NET Core</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">REST & GraphQL</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Performance & Code Quality -->
+                    <div class="bg-surface-card rounded-2xl p-8 backdrop-blur-xl border border-border-subtle relative overflow-hidden group hover:border-primary/40 transition-all">
+                        <div class="flex items-start justify-between mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-primary-container/20 text-primary flex items-center justify-center border border-primary/20">
+                                <span class="material-symbols-outlined text-[28px]">rocket_launch</span>
+                            </div>
+                            <span class="font-code-sm text-xs text-text-muted">04 // OPTIMIZATION</span>
+                        </div>
+                        <h3 class="font-headline-md text-xl text-text-primary font-semibold mb-3">Performance & Code Quality</h3>
+                        <p class="font-body-md text-sm text-text-secondary leading-relaxed mb-6">
+                            Engineering applications that load fast, scale gracefully, and minimize operational costs. Dedicated to automated testing, continuous integration pipelines, cross-browser compatibility, and rigorous code review standards that eliminate technical debt before deployment.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">CI / CD Automation</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">Docker Containers</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">Core Web Vitals</span>
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">Jest / Integration</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Centralized Persistent Footer -->
+    <div id="site-footer"></div>
+
+    <!-- Core Interactive Scripts -->
+    <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/components.js"></script>
+    <script src="assets/js/portfolio-core.js"></script>
+</body>
+</html>
