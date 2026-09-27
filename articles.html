@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Technical Articles & Engineering Insights — Oluwatobi Adejoro</title>
+    <meta name="description" content="Technical publications, backend engineering guides, and software architecture articles written by Oluwatobi Adejoro."/>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon2.jpg"/>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+    
+    <!-- Theme Stylesheet & Anti-flicker Init -->
+    <link rel="stylesheet" href="assets/css/theme.css"/>
+    <script>
+        if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <!-- Tailwind CSS with custom theme config matching design reference -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "surface": "var(--color-surface)",
+                    "surface-card": "var(--color-surface-card)",
+                    "surface-container": "var(--color-surface-container)",
+                    "surface-container-low": "var(--color-surface-container-low)",
+                    "surface-container-lowest": "var(--color-surface-container-lowest)",
+                    "surface-container-high": "var(--color-surface-container-high)",
+                    "surface-container-highest": "var(--color-surface-container-highest)",
+                    "on-surface": "var(--color-on-surface)",
+                    "on-surface-variant": "var(--color-on-surface-variant)",
+                    "text-primary": "var(--color-text-primary)",
+                    "text-secondary": "var(--color-text-secondary)",
+                    "text-muted": "var(--color-text-muted)",
+                    "primary": "var(--color-primary)",
+                    "primary-container": "var(--color-primary-container)",
+                    "on-primary-container": "var(--color-on-primary-container)",
+                    "secondary": "var(--color-secondary)",
+                    "tertiary": "var(--color-tertiary)",
+                    "tertiary-container": "var(--color-tertiary-container)",
+                    "border-subtle": "var(--color-border-subtle)",
+                    "border-accent": "var(--color-border-accent)",
+                    "error": "var(--color-error)"
+                },
+                fontFamily: {
+                    "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+                    "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+                    "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+                    "display-hero": ["Plus Jakarta Sans", "sans-serif"],
+                    "body-lg": ["Inter", "sans-serif"],
+                    "body-md": ["Inter", "sans-serif"],
+                    "body-sm": ["Inter", "sans-serif"],
+                    "code-md": ["JetBrains Mono", "monospace"],
+                    "code-sm": ["JetBrains Mono", "monospace"],
+                    "label-badge": ["JetBrains Mono", "monospace"]
+                }
+            }
+        }
+    };
+    </script>
+    <style>
+        @layer base {
+            html, body { margin: 0; padding: 0; scroll-behavior: smooth; }
+            ::-webkit-scrollbar { width: 8px; }
+            ::-webkit-scrollbar-track { background: var(--color-surface-container-lowest); }
+            ::-webkit-scrollbar-thumb { background: var(--color-surface-container-high); border-radius: 4px; }
+            ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
+
+    <!-- Centralized Persistent Header & Mobile Drawer -->
+    <div id="site-header"></div>
+
+    <!-- Main Articles Page Content -->
+    <main class="w-full pt-28 pb-20 flex-grow">
+        <div class="relative w-full overflow-hidden">
+            
+            <!-- Ambient Glow -->
+            <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-primary-container/15 rounded-full blur-[140px] pointer-events-none"></div>
+            <div class="absolute top-96 right-10 w-[450px] h-[280px] bg-tertiary-container/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 space-y-12">
+                
+                <!-- Section Header -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-border-subtle">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high border border-border-subtle mb-3">
+                            <span class="material-symbols-outlined text-primary text-[16px]">edit_note</span>
+                            <span class="font-label-badge text-xs text-primary uppercase">Knowledge Sharing</span>
+                        </div>
+                        <h1 class="font-headline-lg text-3xl sm:text-4xl text-text-primary font-bold tracking-tight">Technical Writing & Architecture</h1>
+                        <p class="font-body-md text-sm sm:text-base text-text-secondary mt-2 max-w-2xl">
+                            In-depth articles covering backend microservices, modular NestJS architecture, TypeScript patterns, and high-performance web engineering.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Articles Grid -->
+                <div id="articles-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <!-- Article 1: NestJS E-Commerce Endpoints -->
+                    <article class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300">
+                        <div class="h-60 overflow-hidden relative bg-surface-container-high">
+                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="assets/img/blog/blog-img1.png" alt="NestJS E-commerce architecture guide"/>
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent"></div>
+                            <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20 backdrop-blur-md">Backend & NestJS</span>
+                            <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-text-muted border border-border-subtle backdrop-blur-md">6 min read</span>
+                        </div>
+                        <div class="p-7 flex flex-col flex-grow">
+                            <div class="flex items-center gap-2 font-code-sm text-xs text-text-muted mb-2">
+                                <span>Published</span>
+                                <span>•</span>
+                                <span class="text-secondary font-medium">Software Development Guide</span>
+                            </div>
+                            <h2 class="font-headline-md text-xl text-text-primary font-bold mb-3 group-hover:text-primary transition-colors">
+                                Creating Scalable E-Commerce Endpoints Using Node.js & NestJS Technology
+                            </h2>
+                            <p class="font-body-md text-sm text-text-secondary mb-6 leading-relaxed">
+                                A comprehensive architectural walkthrough examining how to architect robust, type-safe e-commerce endpoints with NestJS. Covers dependency injection, payload validation pipes, controller-service separation, and database transaction consistency.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">NestJS</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Node.js</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">TypeScript</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">REST APIs</span>
+                            </div>
+                            <div class="mt-auto pt-4 flex items-center justify-between gap-3 border-t border-border-subtle">
+                                <div class="flex items-center gap-2">
+                                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-high text-text-primary hover:bg-primary-container hover:text-on-primary-container font-body-md text-xs font-medium transition-all border border-border-subtle" href="https://bit.ly/46uFXSL" rel="noopener noreferrer" target="_blank">
+                                        <span>Read on LinkedIn</span>
+                                        <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                                    </a>
+                                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-high text-text-secondary hover:text-text-primary hover:bg-surface-container-highest font-body-md text-xs font-medium transition-all border border-border-subtle" href="https://x.com/tgold_adejoro/status/1940115330845876375" rel="noopener noreferrer" target="_blank">
+                                        <span>Read on X</span>
+                                        <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                                    </a>
+                                </div>
+                                <span class="font-code-sm text-[11px] text-text-muted">bit.ly/46uFXSL</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Article 2: Production TypeScript Architecture -->
+                    <article class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-secondary/50 transition-all duration-300">
+                        <div class="h-60 overflow-hidden relative bg-surface-container-high">
+                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="assets/img/blog/blog-img3.png" alt="TypeScript Architecture Discussion"/>
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent"></div>
+                            <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-secondary border border-secondary/20 backdrop-blur-md">Architecture & Patterns</span>
+                            <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-text-muted border border-border-subtle backdrop-blur-md">5 min read</span>
+                        </div>
+                        <div class="p-7 flex flex-col flex-grow">
+                            <div class="flex items-center gap-2 font-code-sm text-xs text-text-muted mb-2">
+                                <span>Published</span>
+                                <span>•</span>
+                                <span class="text-secondary font-medium">LinkedIn Technical Post</span>
+                            </div>
+                            <h2 class="font-headline-md text-xl text-text-primary font-bold mb-3 group-hover:text-secondary transition-colors">
+                                Enterprise TypeScript & Modular Architecture Patterns in Production Systems
+                            </h2>
+                            <p class="font-body-md text-sm text-text-secondary mb-6 leading-relaxed">
+                                Key insights on implementing clean interfaces, strict typing boundaries, and modular domain architecture. Explores how domain-driven design principles help engineering teams reduce runtime exceptions and maintain long-term velocity.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">TypeScript</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Clean Architecture</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Design Patterns</span>
+                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Best Practices</span>
+                            </div>
+                            <div class="mt-auto pt-4 flex items-center justify-between gap-3 border-t border-border-subtle">
+                                <div class="flex items-center gap-2">
+                                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-high text-text-primary hover:bg-primary-container hover:text-on-primary-container font-body-md text-xs font-medium transition-all border border-border-subtle" href="https://www.linkedin.com/posts/adejoro-oluwatobi-6009411b5_softwaredevelopment-nestjs-typescript-activity-7377137213349707776-I7SF" rel="noopener noreferrer" target="_blank">
+                                        <span>Read on LinkedIn</span>
+                                        <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                                    </a>
+                                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-high text-text-secondary hover:text-text-primary hover:bg-surface-container-highest font-body-md text-xs font-medium transition-all border border-border-subtle" href="https://x.com/tgold_adejoro/status/1971370634048569808" rel="noopener noreferrer" target="_blank">
+                                        <span>Read on X</span>
+                                        <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                                    </a>
+                                </div>
+                                <span class="font-code-sm text-[11px] text-text-muted">Published Post</span>
+                            </div>
+                        </div>
+                    </article>
+
+                </div>
+
+                <!-- Callout Banner -->
+                <div class="bg-surface-card rounded-2xl p-8 border border-border-subtle backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="space-y-1 text-center md:text-left">
+                        <h3 class="font-headline-md text-lg text-text-primary font-bold">Have a technical project or inquiry in mind?</h3>
+                        <p class="font-body-sm text-xs sm:text-sm text-text-secondary">I am available for full-time engineering roles, contract development, and system consulting.</p>
+                    </div>
+                    <a class="px-6 py-3 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-sm font-semibold flex items-center gap-2 hover:bg-primary hover:text-surface transition-all shadow-md shrink-0" href="contact.html">
+                        <span>Let's Talk</span>
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Centralized Persistent Footer -->
+    <div id="site-footer"></div>
+
+    <!-- Core Interactive Scripts -->
+    <script src="assets/js/portfolio-api.js"></script>
+    <script src="assets/js/components.js"></script>
+    <script src="assets/js/portfolio-core.js"></script>
+</body>
+</html>

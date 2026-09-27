@@ -1,0 +1,67 @@
+/* Theme variables for Light & Dark mode */
+:root {
+    --color-surface: #f8fafc;
+    --color-surface-card: rgba(255, 255, 255, 0.90);
+    --color-surface-container: #f1f5f9;
+    --color-surface-container-low: #f8fafc;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-high: #e2e8f0;
+    --color-surface-container-highest: #cbd5e1;
+    --color-on-surface: #0f172a;
+    --color-on-surface-variant: #475569;
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #334155;
+    --color-text-muted: #64748b;
+    --color-primary: #6d28d9;
+    --color-primary-container: #7c3aed;
+    --color-on-primary-container: #ffffff;
+    --color-secondary: #059669;
+    --color-tertiary: #0284c7;
+    --color-tertiary-container: #e0f2fe;
+    --color-border-subtle: rgba(15, 23, 42, 0.08);
+    --color-border-accent: rgba(124, 58, 237, 0.25);
+    --color-error: #dc2626;
+    --header-bg: rgba(255, 255, 255, 0.88);
+    --footer-bg: rgba(248, 250, 252, 0.95);
+    --ambient-glow-1: rgba(124, 58, 237, 0.08);
+    --ambient-glow-2: rgba(2, 132, 199, 0.06);
+    --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+}
+
+.dark {
+    --color-surface: #0b1326;
+    --color-surface-card: rgba(15, 23, 42, 0.70);
+    --color-surface-container: #171f33;
+    --color-surface-container-low: #131b2e;
+    --color-surface-container-lowest: #060e20;
+    --color-surface-container-high: #222a3d;
+    --color-surface-container-highest: #2d3449;
+    --color-on-surface: #dae2fd;
+    --color-on-surface-variant: #ccc3d8;
+    --color-text-primary: #F8FAFC;
+    --color-text-secondary: #94A3B8;
+    --color-text-muted: #64748B;
+    --color-primary: #d2bbff;
+    --color-primary-container: #7c3aed;
+    --color-on-primary-container: #ede0ff;
+    --color-secondary: #4edea3;
+    --color-tertiary: #7bd0ff;
+    --color-tertiary-container: #006e95;
+    --color-border-subtle: rgba(255, 255, 255, 0.08);
+    --color-border-accent: rgba(124, 58, 237, 0.35);
+    --color-error: #ffb4ab;
+    --header-bg: rgba(11, 19, 38, 0.88);
+    --footer-bg: rgba(6, 14, 32, 0.90);
+    --ambient-glow-1: rgba(124, 58, 237, 0.15);
+    --ambient-glow-2: rgba(0, 110, 149, 0.10);
+    --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+/* Smooth background & text color transitions */
+body {
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+header, footer, nav, .bg-surface-card, .bg-surface-container-low {
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
