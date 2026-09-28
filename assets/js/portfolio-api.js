@@ -34,6 +34,20 @@
             }
         },
 
+        /** Helper to format image URLs, ensuring backend /uploads/ paths are absolute */
+        formatImageUrl(url) {
+            if (!url) return '';
+            if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+                return url;
+            }
+            if (url.startsWith('/uploads/') || url.startsWith('uploads/')) {
+                const cleanHost = this.baseUrl.replace(/\/api\/?$/, '');
+                const cleanPath = url.startsWith('/') ? url : `/${url}`;
+                return `${cleanHost}${cleanPath}`;
+            }
+            return url;
+        },
+
         // --- Navigation & Brand ---
         async getNavigation() {
             return this.request('/Navigation');

@@ -16,8 +16,8 @@
                     <span class="font-code-md text-primary font-bold group-hover:text-on-primary-container">OA</span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-headline-sm text-text-primary leading-tight font-semibold">Oluwatobi Adejoro</span>
-                    <span class="font-code-sm text-text-muted leading-tight">Senior Fullstack Engineer</span>
+                    <span id="header-brand-name" class="font-headline-sm text-text-primary leading-tight font-semibold">Oluwatobi Adejoro</span>
+                    <span id="header-primary-title" class="font-code-sm text-text-muted leading-tight">Senior Fullstack Engineer</span>
                 </div>
             </a>
             <div class="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low border border-border-subtle">
@@ -214,17 +214,17 @@
 
             // Full Name & Title
             if (nav.fullName) {
-                document.querySelectorAll('.font-headline-sm.text-text-primary').forEach(el => {
-                    if (el.textContent.trim() === 'Oluwatobi Adejoro') {
-                        el.textContent = nav.fullName;
-                    }
+                const brandEl = document.getElementById('header-brand-name');
+                if (brandEl) brandEl.textContent = nav.fullName;
+                document.querySelectorAll('header .font-headline-sm.text-text-primary, #mobile-menu-drawer .font-headline-sm.text-text-primary').forEach(el => {
+                    el.textContent = nav.fullName;
                 });
             }
             if (nav.primaryTitle) {
-                document.querySelectorAll('.font-code-sm.text-text-muted').forEach(el => {
-                    if (el.textContent.trim() === 'Senior Fullstack Engineer') {
-                        el.textContent = nav.primaryTitle;
-                    }
+                const titleEl = document.getElementById('header-primary-title');
+                if (titleEl) titleEl.textContent = nav.primaryTitle;
+                document.querySelectorAll('header .font-code-sm.text-text-muted').forEach(el => {
+                    el.textContent = nav.primaryTitle;
                 });
             }
 

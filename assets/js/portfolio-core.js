@@ -291,7 +291,8 @@ window.openProjectModal = async function(projectId) {
             cs.technologies.map(t => typeof t === 'string' ? t : t.name) : 
             (project.tags && project.tags.map(t => typeof t === 'string' ? t : t.tagName) || []);
         const liveUrl = cs.liveUrl || project.liveUrl || '';
-        const image = cs.heroImageUrl || project.imageUrl || 'assets/img/work/logo (1).png';
+        const rawImage = cs.heroImageUrl || project.imageUrl || 'assets/img/work/logo (1).png';
+        const image = window.PortfolioApi ? window.PortfolioApi.formatImageUrl(rawImage) : rawImage;
 
         modalContentContainer.innerHTML = `
             <div class="relative w-full h-48 sm:h-64 bg-surface-container-high rounded-xl overflow-hidden mb-6 flex items-center justify-center p-6 border border-border-subtle">
@@ -368,6 +369,164 @@ window.closeProjectModal = function() {
     document.body.style.overflow = '';
 };
 
+// Fallback default articles cache
+window._loadedArticles = [
+    {
+        id: 'nestjs-ecommerce-endpoints',
+        slug: 'nestjs-ecommerce-endpoints',
+        title: 'Creating Scalable E-Commerce Endpoints Using Node.js & NestJS Technology',
+        excerpt: 'A comprehensive architectural walkthrough examining how to architect robust, type-safe e-commerce endpoints with NestJS. Covers dependency injection, payload validation pipes, controller-service separation, and database transaction consistency.',
+        category: 'Backend & NestJS',
+        publicationType: 'Software Development Guide',
+        readTimeMinutes: 6,
+        imageUrl: 'assets/img/blog/blog-img1.png',
+        linkedinUrl: 'https://bit.ly/46uFXSL',
+        twitterUrl: 'https://x.com/tgold_adejoro/status/1940115330845876375',
+        footerAnnotation: 'bit.ly/46uFXSL',
+        publishedAt: '2026-06-27T00:00:00Z',
+        tags: ['NestJS', 'Node.js', 'TypeScript', 'REST APIs']
+    },
+    {
+        id: 'enterprise-typescript-architecture',
+        slug: 'enterprise-typescript-architecture',
+        title: 'Enterprise TypeScript & Modular Architecture Patterns in Production Systems',
+        excerpt: 'Key insights on implementing clean interfaces, strict typing boundaries, and modular domain architecture. Explores how domain-driven design principles help engineering teams reduce runtime exceptions and maintain long-term velocity.',
+        category: 'Architecture & Patterns',
+        publicationType: 'LinkedIn Technical Post',
+        readTimeMinutes: 5,
+        imageUrl: 'assets/img/blog/blog-img3.png',
+        linkedinUrl: 'https://www.linkedin.com/posts/adejoro-oluwatobi-6009411b5_softwaredevelopment-nestjs-typescript-activity-7377137213349707776-I7SF',
+        twitterUrl: 'https://x.com/tgold_adejoro/status/1971370634048569808',
+        footerAnnotation: 'Published Post',
+        publishedAt: '2026-08-27T16:10:26.828372Z',
+        tags: ['TypeScript', 'Clean Architecture', 'Design Patterns', 'Best Practices']
+    }
+];
+
+window.openArticleModal = async function(idOrSlug) {
+    const modalBackdrop = document.getElementById('article-detail-modal');
+    const modalContentContainer = document.getElementById('article-modal-content');
+    if (!modalBackdrop || !modalContentContainer) return;
+
+    modalContentContainer.innerHTML = `
+        <div class="py-16 flex flex-col items-center justify-center gap-3">
+            <div class="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+            <span class="font-code-sm text-xs text-text-muted">Loading article details...</span>
+        </div>
+    `;
+    modalBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+    modalBackdrop.classList.add('opacity-100');
+    document.body.style.overflow = 'hidden';
+
+    try {
+        let article = null;
+        if (window._loadedArticles && Array.isArray(window._loadedArticles)) {
+            article = window._loadedArticles.find(a => a.id === idOrSlug || a.slug === idOrSlug);
+        }
+
+        if (!article && window.PortfolioApi) {
+            try {
+                article = await window.PortfolioApi.getArticleBySlug(idOrSlug);
+            } catch (e) {
+                // Ignore API error and fallback gracefully
+            }
+        }
+
+        if (!article) throw new Error('Article details could not be found');
+
+        const title = article.title || 'Technical Article';
+        const category = article.category || 'Backend Engineering';
+        const readTime = article.readTimeMinutes ? `${article.readTimeMinutes} min read` : '5 min read';
+        const publicationType = article.publicationType || 'Technical Guide';
+        const dateStr = article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Published';
+        const rawImg = article.imageUrl || 'assets/img/blog/blog-img1.png';
+        const image = window.PortfolioApi ? window.PortfolioApi.formatImageUrl(rawImg) : rawImg;
+        const excerpt = article.excerpt || '';
+        const tags = article.tags || [];
+        const tagsHtml = tags.map(t => {
+            const name = typeof t === 'string' ? t : (t.tagName || t.name);
+            return `<span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">${name}</span>`;
+        }).join('');
+
+        modalContentContainer.innerHTML = `
+            <div class="relative w-full h-56 sm:h-72 bg-surface-container-high rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-border-subtle">
+                <img src="${image}" alt="${article.imageAlt || title}" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
+                <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20 backdrop-blur-md">
+                    ${category}
+                </span>
+                <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-text-muted border border-border-subtle backdrop-blur-md">
+                    ${readTime}
+                </span>
+            </div>
+
+            <div class="flex items-center gap-2 font-code-sm text-xs text-text-muted mb-3">
+                <span class="material-symbols-outlined text-[16px] text-primary">calendar_today</span>
+                <span>${dateStr}</span>
+                <span>•</span>
+                <span class="text-secondary font-medium">${publicationType}</span>
+            </div>
+
+            <h3 class="font-headline-lg text-xl sm:text-2xl text-text-primary font-bold mb-4 leading-snug">
+                ${title}
+            </h3>
+
+            <div class="font-body-md text-sm sm:text-base text-text-secondary leading-relaxed mb-6 space-y-3">
+                <p>${excerpt}</p>
+            </div>
+
+            ${tagsHtml ? `
+                <div class="mb-6">
+                    <h4 class="font-code-sm text-xs text-text-muted uppercase tracking-wider mb-2">Core Technologies & Concepts</h4>
+                    <div class="flex flex-wrap gap-2">
+                        ${tagsHtml}
+                    </div>
+                </div>
+            ` : ''}
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-5 border-t border-border-subtle">
+                <div class="flex flex-wrap items-center gap-2">
+                    ${article.linkedinUrl ? `
+                        <a href="${article.linkedinUrl}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-xs font-semibold flex items-center gap-1.5 hover:bg-primary hover:text-surface transition-all shadow-md">
+                            <span>Read Full Article on LinkedIn</span>
+                            <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+                        </a>
+                    ` : ''}
+                    ${article.twitterUrl ? `
+                        <a href="${article.twitterUrl}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-lg bg-surface-container-high text-text-secondary hover:text-text-primary hover:bg-surface-container-highest font-headline-sm text-xs font-medium flex items-center gap-1.5 border border-border-subtle transition-all">
+                            <span>Discussion on X</span>
+                            <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                        </a>
+                    ` : ''}
+                </div>
+                <button type="button" onclick="closeArticleModal()" class="px-4 py-2 rounded-lg bg-surface-container-high text-text-secondary hover:text-text-primary font-headline-sm text-xs transition-colors">
+                    Close
+                </button>
+            </div>
+            ${article.footerAnnotation ? `
+                <div class="mt-3 text-right">
+                    <span class="font-code-sm text-[11px] text-text-muted">Reference: ${article.footerAnnotation}</span>
+                </div>
+            ` : ''}
+        `;
+    } catch (err) {
+        modalContentContainer.innerHTML = `
+            <div class="p-6 text-center">
+                <p class="text-error font-medium mb-3">Could not load article details.</p>
+                <button type="button" onclick="closeArticleModal()" class="px-4 py-2 rounded-lg bg-surface-container-high text-text-primary text-xs">Close</button>
+            </div>
+        `;
+    }
+};
+
+window.closeArticleModal = function() {
+    const modalBackdrop = document.getElementById('article-detail-modal');
+    if (!modalBackdrop) return;
+    modalBackdrop.classList.add('opacity-0', 'pointer-events-none');
+    modalBackdrop.classList.remove('opacity-100');
+    document.body.style.overflow = '';
+};
+
 // 6. Dynamic Page Hydration Modules
 
 /** Hydrate Contact Details */
@@ -378,34 +537,52 @@ async function hydrateContactPage() {
         if (!info) return;
 
         if (info.email) {
+            const emailLink = document.getElementById('contact-email-link');
+            if (emailLink) {
+                emailLink.href = `mailto:${info.email}`;
+                emailLink.textContent = info.email;
+            }
+            const copyBtn = document.getElementById('contact-email-copy-btn');
+            if (copyBtn) {
+                copyBtn.setAttribute('onclick', `copyEmailToClipboard('${info.email}')`);
+            }
             document.querySelectorAll('a[href^="mailto:"]').forEach(a => {
                 a.href = `mailto:${info.email}`;
                 a.textContent = info.email;
             });
         }
         if (info.phone) {
+            const phoneLink = document.getElementById('contact-phone-link');
+            if (phoneLink) {
+                phoneLink.href = `tel:${info.phone}`;
+                phoneLink.textContent = info.phoneDisplay || info.phone;
+            }
             document.querySelectorAll('a[href^="tel:"]').forEach(a => {
                 a.href = `tel:${info.phone}`;
                 a.textContent = info.phoneDisplay || info.phone;
             });
         }
         if (info.whatsappUrl) {
-            const wa = document.querySelector('a[href*="wa.me"]');
+            const wa = document.getElementById('contact-whatsapp-link') || document.querySelector('a[href*="wa.me"]');
             if (wa) wa.href = info.whatsappUrl;
         }
         if (info.responseGuarantee) {
-            document.querySelectorAll('.font-body-md').forEach(el => {
-                if (el.textContent.includes('Guaranteed reply')) {
-                    el.textContent = info.responseGuarantee;
-                }
-            });
+            const guaranteeEl = document.getElementById('contact-response-guarantee');
+            if (guaranteeEl) {
+                guaranteeEl.textContent = info.responseGuarantee;
+            }
         }
         if (info.availabilityText) {
-            document.querySelectorAll('.font-label-badge').forEach(b => {
-                if (b.textContent.toLowerCase().includes('available')) {
-                    b.textContent = info.availabilityText;
-                }
-            });
+            const availBadge = document.getElementById('contact-availability-badge');
+            if (availBadge) {
+                availBadge.textContent = info.availabilityText;
+            }
+        }
+        if (info.engagementScope) {
+            const scopeEl = document.getElementById('contact-engagement-scope');
+            if (scopeEl) {
+                scopeEl.textContent = info.engagementScope;
+            }
         }
     } catch (e) {
         console.debug('[Contact] Hydration deferred:', e.message);
@@ -429,8 +606,9 @@ async function hydratePortfolioPage() {
                 return `<span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">${name}</span>`;
             }).join('');
 
-            const imageHtml = p.imageUrl ? 
-                `<img class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl" src="${p.imageUrl}" alt="${p.imageAlt || p.title}"/>` :
+            const projectImgUrl = p.imageUrl ? (window.PortfolioApi ? window.PortfolioApi.formatImageUrl(p.imageUrl) : p.imageUrl) : null;
+            const imageHtml = projectImgUrl ? 
+                `<img class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl" src="${projectImgUrl}" alt="${p.imageAlt || p.title}"/>` :
                 `<div class="w-16 h-16 rounded-2xl bg-primary-container/20 text-primary flex items-center justify-center border border-primary/20"><span class="material-symbols-outlined text-[32px]">${p.iconKey || 'layers'}</span></div>`;
 
             return `
@@ -495,22 +673,26 @@ async function hydrateArticlesPage() {
         if (articles.value && Array.isArray(articles.value)) articles = articles.value;
         if (!Array.isArray(articles) || !articles.length) return;
 
+        // Store articles in memory for instant modal viewing
+        window._loadedArticles = articles;
+
         grid.innerHTML = articles.map(a => {
             const tags = a.tags || [];
             const tagsHtml = tags.map(t => {
-                const name = typeof t === 'string' ? t : t.tagName;
+                const name = typeof t === 'string' ? t : (t.tagName || t.name);
                 return `<span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">${name}</span>`;
             }).join('');
 
             const dateStr = a.publishedAt ? new Date(a.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Published';
             const readTime = a.readTimeMinutes ? `${a.readTimeMinutes} min read` : '5 min read';
-            const image = a.imageUrl || 'assets/img/blog/blog-img1.png';
+            const rawArticleImg = a.imageUrl || 'assets/img/blog/blog-img1.png';
+            const image = window.PortfolioApi ? window.PortfolioApi.formatImageUrl(rawArticleImg) : rawArticleImg;
 
             return `
                 <article class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300">
-                    <div class="h-60 overflow-hidden relative bg-surface-container-high">
+                    <div onclick="openArticleModal('${a.id}')" class="h-60 overflow-hidden relative bg-surface-container-high cursor-pointer">
                         <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="${image}" alt="${a.imageAlt || a.title}"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
                         <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20 backdrop-blur-md">${a.category || 'Engineering'}</span>
                         <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-text-muted border border-border-subtle backdrop-blur-md">${readTime}</span>
                     </div>
@@ -520,7 +702,7 @@ async function hydrateArticlesPage() {
                             <span>•</span>
                             <span class="text-secondary font-medium">${a.publicationType || 'Software Development Guide'}</span>
                         </div>
-                        <h2 class="font-headline-md text-xl text-text-primary font-bold mb-3 group-hover:text-primary transition-colors">
+                        <h2 onclick="openArticleModal('${a.id}')" class="font-headline-md text-xl text-text-primary font-bold mb-3 cursor-pointer hover:text-primary transition-colors">
                             ${a.title}
                         </h2>
                         <p class="font-body-md text-sm text-text-secondary mb-6 leading-relaxed">
@@ -529,16 +711,20 @@ async function hydrateArticlesPage() {
                         <div class="flex flex-wrap gap-2 mb-6">
                             ${tagsHtml}
                         </div>
-                        <div class="mt-auto pt-4 flex items-center justify-between gap-3 border-t border-border-subtle">
+                        <div class="mt-auto pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border-subtle">
                             <div class="flex items-center gap-2">
+                                <button type="button" onclick="openArticleModal('${a.id}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-container-high text-text-primary hover:bg-primary-container hover:text-on-primary-container font-body-md text-xs font-medium transition-all border border-border-subtle shadow-sm">
+                                    <span class="material-symbols-outlined text-[15px]">visibility</span>
+                                    <span>Details</span>
+                                </button>
                                 ${a.linkedinUrl ? `
-                                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-high text-text-primary hover:bg-primary-container hover:text-on-primary-container font-body-md text-xs font-medium transition-all border border-border-subtle" href="${a.linkedinUrl}" rel="noopener noreferrer" target="_blank">
-                                        <span>Read Article</span>
+                                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-container text-text-primary hover:bg-surface-container-high hover:text-primary font-body-md text-xs font-medium transition-all border border-border-subtle" href="${a.linkedinUrl}" rel="noopener noreferrer" target="_blank">
+                                        <span>LinkedIn</span>
                                         <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
                                     </a>
                                 ` : ''}
                                 ${a.twitterUrl ? `
-                                    <a class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container text-text-secondary hover:text-text-primary font-code-sm text-xs transition-colors border border-border-subtle" href="${a.twitterUrl}" rel="noopener noreferrer" target="_blank" title="Discussion">
+                                    <a class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-surface-container text-text-secondary hover:text-text-primary font-code-sm text-xs transition-colors border border-border-subtle" href="${a.twitterUrl}" rel="noopener noreferrer" target="_blank" title="Discussion">
                                         <span>X / Thread</span>
                                     </a>
                                 ` : ''}
@@ -683,7 +869,39 @@ async function hydrateHomePage() {
         }
 
         if (profile) {
-            // Metrics counters
+            // 1. Developer Identity Card
+            if (profile.fullName) {
+                const nameEl = document.getElementById('hero-full-name');
+                if (nameEl) nameEl.textContent = profile.fullName;
+            }
+            if (profile.primaryTitle) {
+                const titleEl = document.getElementById('hero-primary-title');
+                if (titleEl) titleEl.textContent = profile.primaryTitle;
+            }
+            if (profile.avatarImageUrl) {
+                const avatarEl = document.getElementById('hero-avatar');
+                if (avatarEl) {
+                    const formattedAvatar = window.PortfolioApi ? window.PortfolioApi.formatImageUrl(profile.avatarImageUrl) : profile.avatarImageUrl;
+                    avatarEl.src = formattedAvatar;
+                    if (profile.avatarAltText || profile.fullName) {
+                        avatarEl.alt = profile.avatarAltText || `${profile.fullName} - Photo`;
+                    }
+                }
+            }
+            if (profile.locationDisplay || profile.location) {
+                const locEl = document.getElementById('hero-developer-location');
+                if (locEl) locEl.textContent = profile.locationDisplay || profile.location;
+            }
+            if (profile.employmentStatus) {
+                const statusEl = document.getElementById('hero-developer-status');
+                if (statusEl) statusEl.textContent = profile.employmentStatus;
+            }
+            if (profile.responseTime) {
+                const respEl = document.getElementById('hero-developer-response');
+                if (respEl) respEl.textContent = profile.responseTime;
+            }
+
+            // 2. Metrics counters
             if (profile.yearsExperience) {
                 const expEl = document.getElementById('metric-years-experience');
                 if (expEl) expEl.innerHTML = `${profile.yearsExperience}+ <span class="font-code-sm text-xs text-text-secondary font-normal">Years</span>`;
@@ -725,9 +943,19 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    const articleModalCloseBtn = document.getElementById('article-modal-close');
+    const articleModalBackdrop = document.getElementById('article-detail-modal');
+    if (articleModalCloseBtn) articleModalCloseBtn.onclick = closeArticleModal;
+    if (articleModalBackdrop) {
+        articleModalBackdrop.onclick = (e) => {
+            if (e.target === articleModalBackdrop) closeArticleModal();
+        };
+    }
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             closeProjectModal();
+            closeArticleModal();
             const drawer = document.getElementById('mobile-menu-drawer');
             const backdrop = document.getElementById('mobile-menu-backdrop');
             if (drawer) drawer.classList.add('translate-x-full');
