@@ -4,10 +4,23 @@
  */
 
 (function () {
-    const API_BASE_URL = 'http://localhost:5024/api';
+    const isLocalhost = Boolean(
+        typeof window !== 'undefined' && (
+            window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1' ||
+            window.location.hostname === '[::1]'
+        )
+    );
+
+    const API_BASE_URL = isLocalhost
+        ? 'http://localhost:5024/api'
+        : 'https://portfoliobackend-wisd.onrender.com/api';
 
     const PortfolioApi = {
         baseUrl: API_BASE_URL,
+        isLocalhost: isLocalhost,
+        localApiUrl: 'http://localhost:5024/api',
+        serverApiUrl: 'https://portfoliobackend-wisd.onrender.com/api',
 
         /** Generic fetch helper with timeout & error handling */
         async request(endpoint, options = {}) {

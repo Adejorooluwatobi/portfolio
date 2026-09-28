@@ -910,6 +910,46 @@ async function hydrateHomePage() {
                 const projEl = document.getElementById('metric-projects-completed');
                 if (projEl) projEl.innerHTML = `${profile.projectsCompleted}+ <span class="font-code-sm text-xs text-text-secondary font-normal">Projects</span>`;
             }
+
+            // 3. What I Do (Core Competencies)
+            if (profile.disciplineCards && Array.isArray(profile.disciplineCards) && profile.disciplineCards.length > 0) {
+                const compContainer = document.getElementById('competencies-container');
+                if (compContainer) {
+                    const accents = [
+                        { border: 'hover:border-primary/40', iconBox: 'bg-primary-container/20 text-primary border-primary/20' },
+                        { border: 'hover:border-secondary/40', iconBox: 'bg-secondary/15 text-secondary border-secondary/20' },
+                        { border: 'hover:border-tertiary/40', iconBox: 'bg-tertiary-container/40 text-tertiary border-tertiary/20' },
+                        { border: 'hover:border-primary/40', iconBox: 'bg-primary-container/20 text-primary border-primary/20' }
+                    ];
+
+                    compContainer.innerHTML = profile.disciplineCards.map((card, idx) => {
+                        const accent = accents[idx % accents.length];
+                        const rawTags = card.tags || [];
+                        const tagsHtml = rawTags.map(t => {
+                            const tagName = typeof t === 'string' ? t : (t.tagName || '');
+                            return `<span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">${tagName}</span>`;
+                        }).join('');
+
+                        return `
+                            <div class="bg-surface-card rounded-2xl p-8 backdrop-blur-xl border border-border-subtle relative overflow-hidden group ${accent.border} transition-all">
+                                <div class="flex items-start justify-between mb-6">
+                                    <div class="w-12 h-12 rounded-xl ${accent.iconBox} flex items-center justify-center border">
+                                        <span class="material-symbols-outlined text-[28px]">${card.icon || 'palette'}</span>
+                                    </div>
+                                    <span class="font-code-sm text-xs text-text-muted">${card.indexTag || ''}</span>
+                                </div>
+                                <h3 class="font-headline-md text-xl text-text-primary font-semibold mb-3">${card.title}</h3>
+                                <p class="font-body-md text-sm text-text-secondary leading-relaxed mb-6">
+                                    ${card.description}
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    ${tagsHtml}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
         }
     } catch (e) {
         console.debug('[Home] Hydration deferred:', e.message);
