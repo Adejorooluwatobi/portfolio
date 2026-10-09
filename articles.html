@@ -106,95 +106,57 @@
                     </div>
                 </div>
 
-                <!-- Articles Grid -->
+                <!-- Articles Grid (Hydrated dynamically from backend API) -->
                 <div id="articles-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     
-                    <!-- Article 1: NestJS E-Commerce Endpoints -->
-                    <article class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300">
-                        <div onclick="openArticleModal('nestjs-ecommerce-endpoints')" class="h-60 overflow-hidden relative bg-surface-container-high cursor-pointer">
-                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="assets/img/blog/blog-img1.png" alt="NestJS E-commerce architecture guide"/>
-                            <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
-                            <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20 backdrop-blur-md">Backend & NestJS</span>
-                            <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-text-muted border border-border-subtle backdrop-blur-md">6 min read</span>
+                    <!-- Loading Skeleton Placeholder 1 -->
+                    <article class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col animate-pulse">
+                        <div class="h-60 bg-surface-container-high/60 relative flex items-center justify-center">
+                            <span class="material-symbols-outlined text-text-muted/30 text-[48px]">article</span>
+                            <div class="absolute top-4 left-4 h-6 w-32 rounded-full bg-surface-container-lowest/80 border border-border-subtle"></div>
+                            <div class="absolute top-4 right-4 h-6 w-20 rounded-full bg-surface-container-lowest/80 border border-border-subtle"></div>
                         </div>
-                        <div class="p-7 flex flex-col flex-grow">
-                            <div class="flex items-center gap-2 font-code-sm text-xs text-text-muted mb-2">
-                                <span>Published</span>
-                                <span>•</span>
-                                <span class="text-secondary font-medium">Software Development Guide</span>
+                        <div class="p-7 flex flex-col flex-grow space-y-4">
+                            <div class="h-4 bg-surface-container-high/60 rounded-md w-1/3"></div>
+                            <div class="h-7 bg-surface-container-high rounded-md w-4/5"></div>
+                            <div class="space-y-2 pt-1">
+                                <div class="h-4 bg-surface-container-high/60 rounded-md w-full"></div>
+                                <div class="h-4 bg-surface-container-high/60 rounded-md w-5/6"></div>
                             </div>
-                            <h2 onclick="openArticleModal('nestjs-ecommerce-endpoints')" class="font-headline-md text-xl text-text-primary font-bold mb-3 cursor-pointer hover:text-primary transition-colors">
-                                Creating Scalable E-Commerce Endpoints Using Node.js & NestJS Technology
-                            </h2>
-                            <p class="font-body-md text-sm text-text-secondary mb-6 leading-relaxed">
-                                A comprehensive architectural walkthrough examining how to architect robust, type-safe e-commerce endpoints with NestJS. Covers dependency injection, payload validation pipes, controller-service separation, and database transaction consistency.
-                            </p>
-                            <div class="flex flex-wrap gap-2 mb-6">
-                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">NestJS</span>
-                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Node.js</span>
-                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">TypeScript</span>
-                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">REST APIs</span>
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <div class="h-6 bg-surface-container-high/50 rounded-full w-20"></div>
+                                <div class="h-6 bg-surface-container-high/50 rounded-full w-24"></div>
+                                <div class="h-6 bg-surface-container-high/50 rounded-full w-16"></div>
                             </div>
-                            <div class="mt-auto pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border-subtle">
-                                <div class="flex items-center gap-2">
-                                    <button type="button" onclick="openArticleModal('nestjs-ecommerce-endpoints')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-container-high text-text-primary hover:bg-primary-container hover:text-on-primary-container font-body-md text-xs font-medium transition-all border border-border-subtle shadow-sm">
-                                        <span class="material-symbols-outlined text-[15px]">visibility</span>
-                                        <span>Details</span>
-                                    </button>
-                                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-container text-text-primary hover:bg-surface-container-high hover:text-primary font-body-md text-xs font-medium transition-all border border-border-subtle" href="https://bit.ly/46uFXSL" rel="noopener noreferrer" target="_blank">
-                                        <span>LinkedIn</span>
-                                        <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
-                                    </a>
-                                    <a class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-surface-container text-text-secondary hover:text-text-primary font-code-sm text-xs transition-colors border border-border-subtle" href="https://x.com/tgold_adejoro/status/1940115330845876375" rel="noopener noreferrer" target="_blank" title="Discussion">
-                                        <span>X / Thread</span>
-                                    </a>
-                                </div>
-                                <span class="font-code-sm text-[11px] text-text-muted">bit.ly/46uFXSL</span>
+                            <div class="mt-auto pt-4 flex items-center justify-between border-t border-border-subtle">
+                                <div class="h-8 bg-surface-container-high rounded-md w-24"></div>
+                                <div class="h-4 bg-surface-container-high/50 rounded-md w-24"></div>
                             </div>
                         </div>
                     </article>
 
-                    <!-- Article 2: Production TypeScript Architecture -->
-                    <article class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-secondary/50 transition-all duration-300">
-                        <div onclick="openArticleModal('enterprise-typescript-architecture')" class="h-60 overflow-hidden relative bg-surface-container-high cursor-pointer">
-                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="assets/img/blog/blog-img3.png" alt="TypeScript Architecture Discussion"/>
-                            <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
-                            <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-secondary border border-secondary/20 backdrop-blur-md">Architecture & Patterns</span>
-                            <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-text-muted border border-border-subtle backdrop-blur-md">5 min read</span>
+                    <!-- Loading Skeleton Placeholder 2 -->
+                    <article class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col animate-pulse">
+                        <div class="h-60 bg-surface-container-high/60 relative flex items-center justify-center">
+                            <span class="material-symbols-outlined text-text-muted/30 text-[48px]">article</span>
+                            <div class="absolute top-4 left-4 h-6 w-36 rounded-full bg-surface-container-lowest/80 border border-border-subtle"></div>
+                            <div class="absolute top-4 right-4 h-6 w-20 rounded-full bg-surface-container-lowest/80 border border-border-subtle"></div>
                         </div>
-                        <div class="p-7 flex flex-col flex-grow">
-                            <div class="flex items-center gap-2 font-code-sm text-xs text-text-muted mb-2">
-                                <span>Published</span>
-                                <span>•</span>
-                                <span class="text-secondary font-medium">LinkedIn Technical Post</span>
+                        <div class="p-7 flex flex-col flex-grow space-y-4">
+                            <div class="h-4 bg-surface-container-high/60 rounded-md w-1/3"></div>
+                            <div class="h-7 bg-surface-container-high rounded-md w-3/4"></div>
+                            <div class="space-y-2 pt-1">
+                                <div class="h-4 bg-surface-container-high/60 rounded-md w-full"></div>
+                                <div class="h-4 bg-surface-container-high/60 rounded-md w-4/5"></div>
                             </div>
-                            <h2 onclick="openArticleModal('enterprise-typescript-architecture')" class="font-headline-md text-xl text-text-primary font-bold mb-3 cursor-pointer hover:text-secondary transition-colors">
-                                Enterprise TypeScript & Modular Architecture Patterns in Production Systems
-                            </h2>
-                            <p class="font-body-md text-sm text-text-secondary mb-6 leading-relaxed">
-                                Key insights on implementing clean interfaces, strict typing boundaries, and modular domain architecture. Explores how domain-driven design principles help engineering teams reduce runtime exceptions and maintain long-term velocity.
-                            </p>
-                            <div class="flex flex-wrap gap-2 mb-6">
-                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">TypeScript</span>
-                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Clean Architecture</span>
-                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Design Patterns</span>
-                                <span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">Best Practices</span>
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <div class="h-6 bg-surface-container-high/50 rounded-full w-24"></div>
+                                <div class="h-6 bg-surface-container-high/50 rounded-full w-20"></div>
+                                <div class="h-6 bg-surface-container-high/50 rounded-full w-28"></div>
                             </div>
-                            <div class="mt-auto pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border-subtle">
-                                <div class="flex items-center gap-2">
-                                    <button type="button" onclick="openArticleModal('enterprise-typescript-architecture')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-container-high text-text-primary hover:bg-secondary hover:text-surface font-body-md text-xs font-medium transition-all border border-border-subtle shadow-sm">
-                                        <span class="material-symbols-outlined text-[15px]">visibility</span>
-                                        <span>Details</span>
-                                    </button>
-                                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-container text-text-primary hover:bg-surface-container-high hover:text-secondary font-body-md text-xs font-medium transition-all border border-border-subtle" href="https://www.linkedin.com/posts/adejoro-oluwatobi-6009411b5_softwaredevelopment-nestjs-typescript-activity-7377137213349707776-I7SF" rel="noopener noreferrer" target="_blank">
-                                        <span>LinkedIn</span>
-                                        <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
-                                    </a>
-                                    <a class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-surface-container text-text-secondary hover:text-text-primary font-code-sm text-xs transition-colors border border-border-subtle" href="https://x.com/tgold_adejoro/status/1971370634048569808" rel="noopener noreferrer" target="_blank">
-                                        <span>X / Thread</span>
-                                    </a>
-                                </div>
-                                <span class="font-code-sm text-[11px] text-text-muted">Published Post</span>
+                            <div class="mt-auto pt-4 flex items-center justify-between border-t border-border-subtle">
+                                <div class="h-8 bg-surface-container-high rounded-md w-24"></div>
+                                <div class="h-4 bg-surface-container-high/50 rounded-md w-24"></div>
                             </div>
                         </div>
                     </article>
