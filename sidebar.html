@@ -5,7 +5,10 @@
 
                             <!-- img -->
                             <div class="bostami-parsonal-info-img">
-                                <img src="assets/img/parsonal-info/oluwatobi-img.jpg" alt="avatar">
+                                <img id="sidebar-avatar" src="" alt="avatar" style="display: none;" onerror="this.style.display='none'; document.getElementById('sidebar-avatar-fallback')?.style.setProperty('display', 'flex', 'important');">
+                                <div id="sidebar-avatar-fallback" style="width: 100%; height: 240px; border-radius: 20px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(20, 20, 30, 0.8)); display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: 800; color: #fff;">
+                                    OA
+                                </div>
                             </div>
 
                             <!-- name -->
@@ -82,9 +85,8 @@
                                 </div>
                             </div>
 
-                            <!-- cv button -->
                             <div class="bostami-parsonal-info-btn">
-                                <a class="btn-2 circle" href="assets/doc/OLUWATOBI_Adejoro_CV(Fullstack).docx" download="OLUWATOBI_Adejoro_CV.docx" target="_blank">
+                                <a class="btn-2 circle download-cv-btn" href="#" data-cv-download="true" target="_blank">
                                     <span class="icon">
                                         <i class="fa-regular fa-download"></i>
                                     </span>

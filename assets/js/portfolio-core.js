@@ -369,39 +369,8 @@ window.closeProjectModal = function() {
     document.body.style.overflow = '';
 };
 
-// Fallback default articles cache
-window._loadedArticles = [
-    {
-        id: 'nestjs-ecommerce-endpoints',
-        slug: 'nestjs-ecommerce-endpoints',
-        title: 'Creating Scalable E-Commerce Endpoints Using Node.js & NestJS Technology',
-        excerpt: 'A comprehensive architectural walkthrough examining how to architect robust, type-safe e-commerce endpoints with NestJS. Covers dependency injection, payload validation pipes, controller-service separation, and database transaction consistency.',
-        category: 'Backend & NestJS',
-        publicationType: 'Software Development Guide',
-        readTimeMinutes: 6,
-        imageUrl: 'assets/img/blog/blog-img1.png',
-        linkedinUrl: 'https://bit.ly/46uFXSL',
-        twitterUrl: 'https://x.com/tgold_adejoro/status/1940115330845876375',
-        footerAnnotation: 'bit.ly/46uFXSL',
-        publishedAt: '2026-06-27T00:00:00Z',
-        tags: ['NestJS', 'Node.js', 'TypeScript', 'REST APIs']
-    },
-    {
-        id: 'enterprise-typescript-architecture',
-        slug: 'enterprise-typescript-architecture',
-        title: 'Enterprise TypeScript & Modular Architecture Patterns in Production Systems',
-        excerpt: 'Key insights on implementing clean interfaces, strict typing boundaries, and modular domain architecture. Explores how domain-driven design principles help engineering teams reduce runtime exceptions and maintain long-term velocity.',
-        category: 'Architecture & Patterns',
-        publicationType: 'LinkedIn Technical Post',
-        readTimeMinutes: 5,
-        imageUrl: 'assets/img/blog/blog-img3.png',
-        linkedinUrl: 'https://www.linkedin.com/posts/adejoro-oluwatobi-6009411b5_softwaredevelopment-nestjs-typescript-activity-7377137213349707776-I7SF',
-        twitterUrl: 'https://x.com/tgold_adejoro/status/1971370634048569808',
-        footerAnnotation: 'Published Post',
-        publishedAt: '2026-08-27T16:10:26.828372Z',
-        tags: ['TypeScript', 'Clean Architecture', 'Design Patterns', 'Best Practices']
-    }
-];
+// In-memory articles cache populated dynamically from API
+window._loadedArticles = [];
 
 window.openArticleModal = async function(idOrSlug) {
     const modalBackdrop = document.getElementById('article-detail-modal');
@@ -448,6 +417,28 @@ window.openArticleModal = async function(idOrSlug) {
             return `<span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">${name}</span>`;
         }).join('');
 
+        const modalLinksHtml = (article.links && article.links.length > 0)
+            ? article.links.map(l => `
+                <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-xs font-semibold flex items-center gap-1.5 hover:bg-primary hover:text-surface transition-all shadow-md">
+                    <span>${l.title || 'Open Article'}</span>
+                    <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+                </a>
+            `).join('')
+            : `
+                ${article.linkedinUrl ? `
+                    <a href="${article.linkedinUrl}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-xs font-semibold flex items-center gap-1.5 hover:bg-primary hover:text-surface transition-all shadow-md">
+                        <span>Read Full Article on LinkedIn</span>
+                        <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+                    </a>
+                ` : ''}
+                ${article.twitterUrl ? `
+                    <a href="${article.twitterUrl}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-lg bg-surface-container-high text-text-secondary hover:text-text-primary hover:bg-surface-container-highest font-headline-sm text-xs font-medium flex items-center gap-1.5 border border-border-subtle transition-all">
+                        <span>Discussion on X</span>
+                        <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                    </a>
+                ` : ''}
+            `;
+
         modalContentContainer.innerHTML = `
             <div class="relative w-full h-56 sm:h-72 bg-surface-container-high rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-border-subtle">
                 <img src="${image}" alt="${article.imageAlt || title}" class="w-full h-full object-cover" />
@@ -486,18 +477,7 @@ window.openArticleModal = async function(idOrSlug) {
 
             <div class="flex flex-wrap items-center justify-between gap-3 pt-5 border-t border-border-subtle">
                 <div class="flex flex-wrap items-center gap-2">
-                    ${article.linkedinUrl ? `
-                        <a href="${article.linkedinUrl}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-xs font-semibold flex items-center gap-1.5 hover:bg-primary hover:text-surface transition-all shadow-md">
-                            <span>Read Full Article on LinkedIn</span>
-                            <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
-                        </a>
-                    ` : ''}
-                    ${article.twitterUrl ? `
-                        <a href="${article.twitterUrl}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-lg bg-surface-container-high text-text-secondary hover:text-text-primary hover:bg-surface-container-highest font-headline-sm text-xs font-medium flex items-center gap-1.5 border border-border-subtle transition-all">
-                            <span>Discussion on X</span>
-                            <span class="material-symbols-outlined text-[16px]">open_in_new</span>
-                        </a>
-                    ` : ''}
+                    ${modalLinksHtml}
                 </div>
                 <button type="button" onclick="closeArticleModal()" class="px-4 py-2 rounded-lg bg-surface-container-high text-text-secondary hover:text-text-primary font-headline-sm text-xs transition-colors">
                     Close
@@ -595,10 +575,44 @@ async function hydratePortfolioPage() {
     if (!window.PortfolioApi || !grid) return;
     try {
         const data = await window.PortfolioApi.getProjects();
-        if (!data || !data.projects || !data.projects.length) return;
+        if (!data || !data.projects || !data.projects.length) {
+            grid.innerHTML = `
+                <div class="col-span-1 lg:col-span-2 py-16 px-6 text-center bg-surface-card rounded-2xl border border-border-subtle shadow-xl">
+                    <div class="w-16 h-16 rounded-2xl bg-surface-container-high text-primary mx-auto mb-4 flex items-center justify-center border border-border-subtle">
+                        <span class="material-symbols-outlined text-[32px]">folder_open</span>
+                    </div>
+                    <h3 class="font-headline-md text-xl text-text-primary font-bold mb-2">No Projects Published Yet</h3>
+                    <p class="font-body-md text-sm text-text-secondary max-w-md mx-auto mb-6">
+                        Projects and case studies are currently being curated. Check back shortly or explore my live repositories directly on GitHub.
+                    </p>
+                    <a href="https://github.com/Adejorotgold1" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-xs font-semibold hover:bg-primary hover:text-surface transition-all shadow-md">
+                        <span>Explore GitHub Profile</span>
+                        <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                    </a>
+                </div>
+            `;
+            return;
+        }
+
+        // Dynamic Category Filter Pills from backend categories
+        const filterContainer = document.getElementById('project-categories-filter');
+        if (filterContainer && data.categories && Array.isArray(data.categories) && data.categories.length) {
+            const extraCats = data.categories.filter(c => c.slug !== 'all' && c.slug !== '');
+            let pillsHtml = `
+                <span class="font-code-sm text-xs text-text-muted mr-1">Filter:</span>
+                <button type="button" class="project-filter-btn px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-code-sm text-xs font-semibold transition-all" data-filter="all">All</button>
+            `;
+            extraCats.forEach(c => {
+                pillsHtml += `
+                    <button type="button" class="project-filter-btn px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-code-sm text-xs transition-all border border-border-subtle" data-filter="${c.slug}">${c.label}</button>
+                `;
+            });
+            filterContainer.innerHTML = pillsHtml;
+        }
 
         grid.innerHTML = data.projects.map(p => {
             const categoryClasses = (p.categorySlugs || []).join(' ') + ' all';
+            const categoryAttr = (p.categorySlugs || []).join(' ') + ' all';
             const mainCategory = p.categoryBadgeText || 'Fullstack Project';
             const tags = p.tags || [];
             const tagsHtml = tags.map(t => {
@@ -612,7 +626,7 @@ async function hydratePortfolioPage() {
                 `<div class="w-16 h-16 rounded-2xl bg-primary-container/20 text-primary flex items-center justify-center border border-primary/20"><span class="material-symbols-outlined text-[32px]">${p.iconKey || 'layers'}</span></div>`;
 
             return `
-                <div class="project-item ${categoryClasses} bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300" data-category="${p.categorySlugs && p.categorySlugs[0] || 'all'}">
+                <div class="project-item ${categoryClasses} bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300" data-category="${categoryAttr}">
                     <div class="h-64 overflow-hidden relative bg-surface-container-high flex items-center justify-center p-8">
                         ${imageHtml}
                         <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
@@ -659,7 +673,22 @@ async function hydratePortfolioPage() {
 
         initProjectFilters();
     } catch (e) {
-        console.debug('[Portfolio] Hydration deferred:', e.message);
+        console.warn('[Portfolio] Failed to load projects:', e.message);
+        grid.innerHTML = `
+            <div class="col-span-1 lg:col-span-2 py-14 px-6 text-center bg-surface-card rounded-2xl border border-error/30 shadow-xl">
+                <div class="w-14 h-14 rounded-2xl bg-error/10 text-error mx-auto mb-4 flex items-center justify-center border border-error/20">
+                    <span class="material-symbols-outlined text-[28px]">cloud_off</span>
+                </div>
+                <h3 class="font-headline-md text-lg text-text-primary font-bold mb-2">Unable to Connect to Cloud Backend</h3>
+                <p class="font-body-md text-sm text-text-secondary max-w-md mx-auto mb-5">
+                    The backend server may be waking up from free-tier cold standby or temporarily unreachable.
+                </p>
+                <button type="button" onclick="hydratePortfolioPage()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-high text-text-primary hover:bg-primary hover:text-surface border border-border-subtle font-headline-sm text-xs font-semibold transition-all">
+                    <span class="material-symbols-outlined text-[16px]">refresh</span>
+                    <span>Retry Connection</span>
+                </button>
+            </div>
+        `;
     }
 }
 
@@ -669,9 +698,22 @@ async function hydrateArticlesPage() {
     if (!window.PortfolioApi || !grid) return;
     try {
         let articles = await window.PortfolioApi.getArticles();
-        if (!articles) return;
-        if (articles.value && Array.isArray(articles.value)) articles = articles.value;
-        if (!Array.isArray(articles) || !articles.length) return;
+        if (articles && articles.value && Array.isArray(articles.value)) articles = articles.value;
+
+        if (!Array.isArray(articles) || !articles.length) {
+            grid.innerHTML = `
+                <div class="col-span-1 lg:col-span-2 py-16 px-6 text-center bg-surface-card rounded-2xl border border-border-subtle shadow-xl">
+                    <div class="w-16 h-16 rounded-2xl bg-surface-container-high text-primary mx-auto mb-4 flex items-center justify-center border border-border-subtle">
+                        <span class="material-symbols-outlined text-[32px]">article</span>
+                    </div>
+                    <h3 class="font-headline-md text-xl text-text-primary font-bold mb-2">No Articles Published Yet</h3>
+                    <p class="font-body-md text-sm text-text-secondary max-w-md mx-auto mb-6">
+                        Technical articles and architecture guides are currently being prepared. Check back shortly for new publications.
+                    </p>
+                </div>
+            `;
+            return;
+        }
 
         // Store articles in memory for instant modal viewing
         window._loadedArticles = articles;
@@ -687,6 +729,27 @@ async function hydrateArticlesPage() {
             const readTime = a.readTimeMinutes ? `${a.readTimeMinutes} min read` : '5 min read';
             const rawArticleImg = a.imageUrl || 'assets/img/blog/blog-img1.png';
             const image = window.PortfolioApi ? window.PortfolioApi.formatImageUrl(rawArticleImg) : rawArticleImg;
+
+            const linksHtml = (a.links && a.links.length > 0)
+                ? a.links.map(l => `
+                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-container text-text-primary hover:bg-surface-container-high hover:text-primary font-body-md text-xs font-medium transition-all border border-border-subtle" href="${l.url}" rel="noopener noreferrer" target="_blank">
+                        <span>${l.title || 'Link'}</span>
+                        <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                    </a>
+                `).join('')
+                : `
+                    ${a.linkedinUrl ? `
+                        <a class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-container text-text-primary hover:bg-surface-container-high hover:text-primary font-body-md text-xs font-medium transition-all border border-border-subtle" href="${a.linkedinUrl}" rel="noopener noreferrer" target="_blank">
+                            <span>LinkedIn</span>
+                            <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                        </a>
+                    ` : ''}
+                    ${a.twitterUrl ? `
+                        <a class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-surface-container text-text-secondary hover:text-text-primary font-code-sm text-xs transition-colors border border-border-subtle" href="${a.twitterUrl}" rel="noopener noreferrer" target="_blank" title="Discussion">
+                            <span>X / Thread</span>
+                        </a>
+                    ` : ''}
+                `;
 
             return `
                 <article class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300">
@@ -712,22 +775,12 @@ async function hydrateArticlesPage() {
                             ${tagsHtml}
                         </div>
                         <div class="mt-auto pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border-subtle">
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
                                 <button type="button" onclick="openArticleModal('${a.id}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-container-high text-text-primary hover:bg-primary-container hover:text-on-primary-container font-body-md text-xs font-medium transition-all border border-border-subtle shadow-sm">
                                     <span class="material-symbols-outlined text-[15px]">visibility</span>
                                     <span>Details</span>
                                 </button>
-                                ${a.linkedinUrl ? `
-                                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-container text-text-primary hover:bg-surface-container-high hover:text-primary font-body-md text-xs font-medium transition-all border border-border-subtle" href="${a.linkedinUrl}" rel="noopener noreferrer" target="_blank">
-                                        <span>LinkedIn</span>
-                                        <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
-                                    </a>
-                                ` : ''}
-                                ${a.twitterUrl ? `
-                                    <a class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-surface-container text-text-secondary hover:text-text-primary font-code-sm text-xs transition-colors border border-border-subtle" href="${a.twitterUrl}" rel="noopener noreferrer" target="_blank" title="Discussion">
-                                        <span>X / Thread</span>
-                                    </a>
-                                ` : ''}
+                                ${linksHtml}
                             </div>
                             <span class="font-code-sm text-[11px] text-text-muted">${a.footerAnnotation || 'Oluwatobi Adejoro'}</span>
                         </div>
@@ -736,7 +789,22 @@ async function hydrateArticlesPage() {
             `;
         }).join('');
     } catch (e) {
-        console.debug('[Articles] Hydration deferred:', e.message);
+        console.warn('[Articles] Failed to load articles:', e.message);
+        grid.innerHTML = `
+            <div class="col-span-1 lg:col-span-2 py-14 px-6 text-center bg-surface-card rounded-2xl border border-error/30 shadow-xl">
+                <div class="w-14 h-14 rounded-2xl bg-error/10 text-error mx-auto mb-4 flex items-center justify-center border border-error/20">
+                    <span class="material-symbols-outlined text-[28px]">cloud_off</span>
+                </div>
+                <h3 class="font-headline-md text-lg text-text-primary font-bold mb-2">Unable to Connect to Cloud Backend</h3>
+                <p class="font-body-md text-sm text-text-secondary max-w-md mx-auto mb-5">
+                    The backend server may be waking up from free-tier cold standby or temporarily unreachable.
+                </p>
+                <button type="button" onclick="hydrateArticlesPage()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-high text-text-primary hover:bg-primary hover:text-surface border border-border-subtle font-headline-sm text-xs font-semibold transition-all">
+                    <span class="material-symbols-outlined text-[16px]">refresh</span>
+                    <span>Retry Connection</span>
+                </button>
+            </div>
+        `;
     }
 }
 
@@ -749,6 +817,20 @@ async function hydrateResumePage() {
     try {
         const resume = await window.PortfolioApi.getResume();
         if (!resume) return;
+
+        // 0. Dynamic CV Download Link
+        if (resume.cvFileUrl) {
+            const formattedCv = window.PortfolioApi ? window.PortfolioApi.formatImageUrl(resume.cvFileUrl) : resume.cvFileUrl;
+            const cvBtns = document.querySelectorAll('a[data-cv-download="true"], a.download-cv-btn');
+            cvBtns.forEach(btn => {
+                btn.setAttribute('href', formattedCv);
+                btn.setAttribute('target', '_blank');
+                btn.setAttribute('rel', 'noopener noreferrer');
+                if (resume.cvDownloadName) {
+                    btn.setAttribute('download', resume.cvDownloadName);
+                }
+            });
+        }
 
         // 1. Work Experience Timeline
         if (timeline && resume.experiences && resume.experiences.length) {
@@ -878,14 +960,33 @@ async function hydrateHomePage() {
                 const titleEl = document.getElementById('hero-primary-title');
                 if (titleEl) titleEl.textContent = profile.primaryTitle;
             }
-            if (profile.avatarImageUrl) {
-                const avatarEl = document.getElementById('hero-avatar');
-                if (avatarEl) {
-                    const formattedAvatar = window.PortfolioApi ? window.PortfolioApi.formatImageUrl(profile.avatarImageUrl) : profile.avatarImageUrl;
-                    avatarEl.src = formattedAvatar;
+            const avatarUrl = profile.avatarImageUrl ? (window.PortfolioApi ? window.PortfolioApi.formatImageUrl(profile.avatarImageUrl) : profile.avatarImageUrl) : null;
+            const heroAvatarEl = document.getElementById('hero-avatar');
+            const heroFallbackEl = document.getElementById('hero-avatar-fallback');
+            if (heroAvatarEl) {
+                if (avatarUrl) {
+                    heroAvatarEl.src = avatarUrl;
+                    heroAvatarEl.style.display = 'block';
+                    if (heroFallbackEl) heroFallbackEl.style.display = 'none';
                     if (profile.avatarAltText || profile.fullName) {
-                        avatarEl.alt = profile.avatarAltText || `${profile.fullName} - Photo`;
+                        heroAvatarEl.alt = profile.avatarAltText || `${profile.fullName} - Photo`;
                     }
+                } else {
+                    heroAvatarEl.style.display = 'none';
+                    if (heroFallbackEl) heroFallbackEl.style.display = 'flex';
+                }
+            }
+
+            const sidebarAvatarEl = document.getElementById('sidebar-avatar');
+            const sidebarFallbackEl = document.getElementById('sidebar-avatar-fallback');
+            if (sidebarAvatarEl) {
+                if (avatarUrl) {
+                    sidebarAvatarEl.src = avatarUrl;
+                    sidebarAvatarEl.style.display = 'block';
+                    if (sidebarFallbackEl) sidebarFallbackEl.style.display = 'none';
+                } else {
+                    sidebarAvatarEl.style.display = 'none';
+                    if (sidebarFallbackEl) sidebarFallbackEl.style.display = 'flex';
                 }
             }
             if (profile.locationDisplay || profile.location) {
@@ -915,7 +1016,7 @@ async function hydrateHomePage() {
             if (profile.disciplineCards && Array.isArray(profile.disciplineCards) && profile.disciplineCards.length > 0) {
                 const compContainer = document.getElementById('competencies-container');
                 if (compContainer) {
-                    const accents = [
+                    const fallbackAccents = [
                         { border: 'hover:border-primary/40', iconBox: 'bg-primary-container/20 text-primary border-primary/20' },
                         { border: 'hover:border-secondary/40', iconBox: 'bg-secondary/15 text-secondary border-secondary/20' },
                         { border: 'hover:border-tertiary/40', iconBox: 'bg-tertiary-container/40 text-tertiary border-tertiary/20' },
@@ -923,7 +1024,13 @@ async function hydrateHomePage() {
                     ];
 
                     compContainer.innerHTML = profile.disciplineCards.map((card, idx) => {
-                        const accent = accents[idx % accents.length];
+                        const accent = fallbackAccents[idx % fallbackAccents.length];
+                        const customColor = card.accentColor || null;
+                        const iconBoxStyle = customColor ? `style="background-color: ${customColor}22; color: ${customColor}; border-color: ${customColor}44;"` : '';
+                        const iconBoxClass = customColor ? 'w-12 h-12 rounded-xl flex items-center justify-center border shadow-sm' : `w-12 h-12 rounded-xl ${accent.iconBox} flex items-center justify-center border`;
+                        const cardHoverAttrs = customColor ? `style="--card-accent: ${customColor};" onmouseenter="this.style.borderColor='${customColor}66'" onmouseleave="this.style.borderColor=''"` : '';
+                        const cardBorderClass = customColor ? 'hover:shadow-lg' : accent.border;
+
                         const rawTags = card.tags || [];
                         const tagsHtml = rawTags.map(t => {
                             const tagName = typeof t === 'string' ? t : (t.tagName || '');
@@ -931,9 +1038,9 @@ async function hydrateHomePage() {
                         }).join('');
 
                         return `
-                            <div class="bg-surface-card rounded-2xl p-8 backdrop-blur-xl border border-border-subtle relative overflow-hidden group ${accent.border} transition-all">
+                            <div class="bg-surface-card rounded-2xl p-8 backdrop-blur-xl border border-border-subtle relative overflow-hidden group ${cardBorderClass} transition-all duration-300" ${cardHoverAttrs}>
                                 <div class="flex items-start justify-between mb-6">
-                                    <div class="w-12 h-12 rounded-xl ${accent.iconBox} flex items-center justify-center border">
+                                    <div class="${iconBoxClass}" ${iconBoxStyle}>
                                         <span class="material-symbols-outlined text-[28px]">${card.icon || 'palette'}</span>
                                     </div>
                                     <span class="font-code-sm text-xs text-text-muted">${card.indexTag || ''}</span>

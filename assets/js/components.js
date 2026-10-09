@@ -46,7 +46,7 @@
             <a class="w-9 h-9 rounded-lg bg-surface-container-high/70 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-border-subtle" href="https://www.linkedin.com/in/adejoro-oluwatobi-6009411b5/" rel="noopener noreferrer" target="_blank" title="LinkedIn">
                 <span class="material-symbols-outlined text-[20px]">share</span>
             </a>
-            <a class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-sm font-semibold hover:bg-primary hover:text-surface transition-all shadow-md" href="assets/doc/OLUWATOBI_Adejoro_CV(Fullstack).docx" download="OLUWATOBI_Adejoro_CV.docx" title="Download Verified Fullstack CV">
+            <a class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-sm font-semibold hover:bg-primary hover:text-surface transition-all shadow-md download-cv-btn" href="#" data-cv-download="true" title="Download Verified Fullstack CV">
                 <span class="material-symbols-outlined text-[18px]">download</span>
                 <span>Download CV</span>
             </a>
@@ -102,7 +102,7 @@
             </span>
             <span class="font-code-sm text-xs text-text-muted">Light / Dark</span>
         </button>
-        <a class="w-full py-2.5 px-4 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-sm font-semibold flex items-center justify-center gap-2 hover:bg-primary hover:text-surface transition-all shadow-md" href="assets/doc/OLUWATOBI_Adejoro_CV(Fullstack).docx" download="OLUWATOBI_Adejoro_CV.docx">
+        <a class="w-full py-2.5 px-4 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-sm font-semibold flex items-center justify-center gap-2 hover:bg-primary hover:text-surface transition-all shadow-md download-cv-btn" href="#" data-cv-download="true">
             <span class="material-symbols-outlined text-[18px]">download</span>
             <span>Download CV</span>
         </a>
@@ -237,11 +237,14 @@
                 });
             }
 
-            // CV Download link
+            // CV Download link (Direct Cloudinary URL)
             if (nav.cvFileUrl) {
-                const cvBtns = document.querySelectorAll('a[download]');
+                const formattedCv = window.PortfolioApi ? window.PortfolioApi.formatImageUrl(nav.cvFileUrl) : nav.cvFileUrl;
+                const cvBtns = document.querySelectorAll('a[data-cv-download="true"], a.download-cv-btn, a[download]');
                 cvBtns.forEach(btn => {
-                    btn.setAttribute('href', nav.cvFileUrl);
+                    btn.setAttribute('href', formattedCv);
+                    btn.setAttribute('target', '_blank');
+                    btn.setAttribute('rel', 'noopener noreferrer');
                     if (nav.cvDownloadName) {
                         btn.setAttribute('download', nav.cvDownloadName);
                     }
@@ -272,6 +275,38 @@
 
         setActiveNavigation();
         await hydrateNavigationComponents();
+
+        // Safe CV download click handler (if clicked before hydration completes or during cold-start)
+        document.addEventListener('click', async (e) => {
+            const btn = e.target.closest('a[data-cv-download="true"], a.download-cv-btn');
+            if (!btn) return;
+            const currentHref = btn.getAttribute('href');
+            if (!currentHref || currentHref === '#' || currentHref.startsWith('javascript:')) {
+                e.preventDefault();
+                if (window.PortfolioApi) {
+                    const origHtml = btn.innerHTML;
+                    btn.style.pointerEvents = 'none';
+                    btn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span><span>Fetching CV...</span>`;
+                    try {
+                        const nav = await window.PortfolioApi.getNavigation();
+                        if (nav && nav.cvFileUrl) {
+                            const formatted = window.PortfolioApi.formatImageUrl(nav.cvFileUrl);
+                            btn.setAttribute('href', formatted);
+                            btn.setAttribute('target', '_blank');
+                            btn.setAttribute('rel', 'noopener noreferrer');
+                            window.open(formatted, '_blank');
+                        } else {
+                            alert('CV document is currently being updated. Please check back shortly or reach out via contact inquiry.');
+                        }
+                    } catch (err) {
+                        alert('Backend server is currently waking up from standby. Please retry in a few seconds.');
+                    } finally {
+                        btn.style.pointerEvents = '';
+                        btn.innerHTML = origHtml;
+                    }
+                }
+            }
+        });
 
         // Dispatch event so portfolio-core.js binds handlers to newly inserted DOM elements
         document.dispatchEvent(new CustomEvent('components:ready'));
