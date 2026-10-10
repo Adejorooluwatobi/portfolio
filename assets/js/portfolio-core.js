@@ -261,8 +261,8 @@ window.openProjectModal = async function(projectId) {
     if (!modalBackdrop || !modalContentContainer) return;
 
     modalContentContainer.innerHTML = `
-        <div class="py-16 flex flex-col items-center justify-center gap-3">
-            <div class="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+        <div class="py-20 flex flex-col items-center justify-center gap-3">
+            <div class="w-9 h-9 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
             <span class="font-code-sm text-xs text-text-muted">Loading architectural case study...</span>
         </div>
     `;
@@ -270,92 +270,150 @@ window.openProjectModal = async function(projectId) {
     modalBackdrop.classList.add('opacity-100');
     document.body.style.overflow = 'hidden';
 
+    // In-memory cached lookup
+    const cachedProject = (window._loadedProjects && Array.isArray(window._loadedProjects)) ?
+        window._loadedProjects.find(p => p.id === projectId || p.slug === projectId) : null;
+
     try {
         let project = null;
         if (window.PortfolioApi) {
-            project = await window.PortfolioApi.getProjectByIdOrSlug(projectId);
+            try {
+                project = await window.PortfolioApi.getProjectByIdOrSlug(projectId);
+            } catch (apiErr) {
+                console.warn('[CaseStudy] API lookup failed, falling back to cached project:', apiErr.message);
+            }
         }
 
-        if (!project) throw new Error('Project not found');
+        if (!project && cachedProject) {
+            project = cachedProject;
+        }
+
+        if (!project) throw new Error('Project details not available.');
 
         const cs = project.caseStudy || {};
-        const title = cs.title || project.title;
+        const title = cs.title || project.title || 'Architectural Project';
         const category = cs.categoryLabel || project.categoryBadgeText || 'Fullstack Architecture';
         const year = cs.year || project.timeframe || '';
-        const client = cs.clientName || project.clientName || 'Verified Client';
-        const summary = cs.summary || project.shortDescription || '';
-        const highlights = (cs.highlights && cs.highlights.length) ? 
-            cs.highlights.map(h => typeof h === 'string' ? h : h.highlightText) : 
-            ['Engineered for resilient web traffic and high availability', 'Accessibility and SEO optimization verified'];
-        const techs = (cs.technologies && cs.technologies.length) ? 
-            cs.technologies.map(t => typeof t === 'string' ? t : t.name) : 
-            (project.tags && project.tags.map(t => typeof t === 'string' ? t : t.tagName) || []);
+        const client = cs.clientName || project.clientName || 'Production System';
+        const summary = cs.summary || project.shortDescription || 'Comprehensive engineering solution deployed in high-availability cloud environments.';
+        
+        let highlights = [];
+        if (cs.highlights && Array.isArray(cs.highlights) && cs.highlights.length > 0) {
+            highlights = cs.highlights.map(h => typeof h === 'string' ? h : (h.highlightText || ''));
+        } else {
+            highlights = [
+                'Engineered for resilient web traffic, optimal caching, and sub-second latencies.',
+                'Designed with modular domain patterns, automated testing, and CI/CD automation.',
+                'Full cross-browser responsiveness, high accessibility, and modern UI performance.'
+            ];
+        }
+
+        let techs = [];
+        if (cs.technologies && Array.isArray(cs.technologies) && cs.technologies.length > 0) {
+            techs = cs.technologies.map(t => typeof t === 'string' ? t : (t.name || t.tagName || ''));
+        } else if (project.tags && Array.isArray(project.tags)) {
+            techs = project.tags.map(t => typeof t === 'string' ? t : (t.tagName || t.name || ''));
+        }
+
         const liveUrl = cs.liveUrl || project.liveUrl || '';
+        const githubUrl = project.githubUrl || '';
         const rawImage = cs.heroImageUrl || project.imageUrl || 'assets/img/work/logo (1).png';
         const image = window.PortfolioApi ? window.PortfolioApi.formatImageUrl(rawImage) : rawImage;
 
         modalContentContainer.innerHTML = `
-            <div class="relative w-full h-48 sm:h-64 bg-surface-container-high rounded-xl overflow-hidden mb-6 flex items-center justify-center p-6 border border-border-subtle">
-                <img src="${image}" alt="${title}" class="max-h-full max-w-full object-contain drop-shadow-xl" />
+            <div class="relative w-full h-52 sm:h-72 bg-surface-container-high rounded-2xl overflow-hidden mb-6 flex items-center justify-center p-6 border border-border-subtle group">
+                <img src="${image}" alt="${title}" class="max-h-full max-w-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105" />
                 <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
-                <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20 backdrop-blur-md">
+                <span class="absolute top-4 left-4 font-label-badge text-xs px-3.5 py-1.5 rounded-full bg-surface-container-lowest/85 text-primary border border-primary/25 backdrop-blur-md shadow-sm">
                     ${category}
                 </span>
-                <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-secondary border border-secondary/20 backdrop-blur-md">
-                    ${year}
-                </span>
+                ${year ? `
+                    <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/85 text-secondary border border-secondary/25 backdrop-blur-md shadow-sm">
+                        ${year}
+                    </span>
+                ` : ''}
             </div>
 
-            <div class="flex items-center justify-between gap-4 mb-2">
-                <h3 class="font-headline-lg text-xl sm:text-2xl text-text-primary font-bold">${title}</h3>
-            </div>
-            <div class="font-code-sm text-xs text-primary mb-4 flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-[16px]">verified</span>
-                <span>Client: ${client}</span>
-            </div>
-
-            <p class="font-body-md text-sm text-text-secondary leading-relaxed mb-6">
-                ${summary}
-            </p>
-
-            <div class="mb-6">
-                <h4 class="font-headline-sm text-sm text-text-primary font-semibold mb-3">Key Highlights & Architecture</h4>
-                <ul class="space-y-2">
-                    ${highlights.map(f => `
-                        <li class="flex items-start gap-2.5 font-body-sm text-sm text-text-secondary">
-                            <span class="material-symbols-outlined text-secondary text-[16px] shrink-0 mt-0.5">check_circle</span>
-                            <span>${f}</span>
-                        </li>
-                    `).join('')}
-                </ul>
-            </div>
-
-            <div class="mb-6">
-                <h4 class="font-code-sm text-xs text-text-muted uppercase tracking-wider mb-2">Technologies Used</h4>
-                <div class="flex flex-wrap gap-2">
-                    ${techs.map(s => `
-                        <span class="font-label-badge text-xs px-2.5 py-1 rounded-full bg-surface-container text-text-primary border border-border-subtle">${s}</span>
-                    `).join('')}
+            <div class="mb-3">
+                <h3 class="font-headline-lg text-xl sm:text-2xl text-text-primary font-bold leading-tight mb-2">${title}</h3>
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="font-code-sm text-xs text-primary flex items-center gap-1.5 bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
+                        <span class="material-symbols-outlined text-[15px]">verified</span>
+                        <span>Client: ${client}</span>
+                    </span>
+                    ${year ? `
+                        <span class="font-code-sm text-xs text-text-muted flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[15px]">calendar_today</span>
+                            <span>${year}</span>
+                        </span>
+                    ` : ''}
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-3 pt-4 border-t border-border-subtle">
-                ${liveUrl ? `
-                    <a href="${liveUrl}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-xs font-semibold flex items-center gap-1.5 hover:bg-primary hover:text-surface transition-all shadow-md">
-                        <span>Inspect Live Deployment</span>
-                        <span class="material-symbols-outlined text-[16px]">open_in_new</span>
-                    </a>
-                ` : ''}
-                <button type="button" onclick="closeProjectModal()" class="px-4 py-2 rounded-lg bg-surface-container-high text-text-secondary hover:text-text-primary font-headline-sm text-xs transition-colors">
+            <div class="p-4 rounded-xl bg-surface-container-lowest/60 border border-border-subtle mb-6">
+                <h4 class="font-code-sm text-xs text-text-muted uppercase tracking-wider mb-2 font-semibold">System Architecture & Overview</h4>
+                <p class="font-body-md text-sm text-text-secondary leading-relaxed">
+                    ${summary}
+                </p>
+            </div>
+
+            ${highlights.length > 0 ? `
+                <div class="mb-6">
+                    <h4 class="font-headline-sm text-sm text-text-primary font-semibold mb-3 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary text-[18px]">verified_user</span>
+                        <span>Key Highlights & Engineering Feats</span>
+                    </h4>
+                    <ul class="space-y-2.5">
+                        ${highlights.map(f => `
+                            <li class="flex items-start gap-2.5 font-body-sm text-sm text-text-secondary bg-surface-container/40 p-2.5 rounded-lg border border-border-subtle/50">
+                                <span class="material-symbols-outlined text-secondary text-[17px] shrink-0 mt-0.5">check_circle</span>
+                                <span class="leading-relaxed">${f}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+
+            ${techs.length > 0 ? `
+                <div class="mb-6">
+                    <h4 class="font-code-sm text-xs text-text-muted uppercase tracking-wider mb-2.5 font-semibold">Technologies & Infrastructure</h4>
+                    <div class="flex flex-wrap gap-2">
+                        ${techs.map(s => `
+                            <span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-text-primary border border-border-subtle font-medium">${s}</span>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-5 border-t border-border-subtle mt-4">
+                <div class="flex flex-wrap items-center gap-2">
+                    ${liveUrl ? `
+                        <a href="${liveUrl}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-xs font-semibold flex items-center gap-1.5 hover:bg-primary hover:text-surface transition-all shadow-md">
+                            <span>Inspect Live Deployment</span>
+                            <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                        </a>
+                    ` : ''}
+                    ${githubUrl ? `
+                        <a href="${githubUrl}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-surface-container-high text-text-primary font-code-sm text-xs font-medium flex items-center gap-1.5 hover:bg-surface-container-highest transition-colors border border-border-subtle">
+                            <span>View Source</span>
+                            <span class="material-symbols-outlined text-[15px]">code</span>
+                        </a>
+                    ` : ''}
+                </div>
+                <button type="button" onclick="closeProjectModal()" class="px-4 py-2 rounded-xl bg-surface-container text-text-secondary hover:text-text-primary hover:bg-surface-container-high font-headline-sm text-xs transition-colors border border-border-subtle">
                     Close
                 </button>
             </div>
         `;
     } catch (err) {
         modalContentContainer.innerHTML = `
-            <div class="p-6 text-center">
-                <p class="text-error font-medium mb-3">Could not load case study details.</p>
-                <button type="button" onclick="closeProjectModal()" class="px-4 py-2 rounded-lg bg-surface-container-high text-text-primary text-xs">Close</button>
+            <div class="p-8 text-center flex flex-col items-center">
+                <div class="w-12 h-12 rounded-full bg-error/10 text-error flex items-center justify-center mb-3">
+                    <span class="material-symbols-outlined text-[24px]">error_outline</span>
+                </div>
+                <p class="text-text-primary font-semibold mb-1">Could not load case study details</p>
+                <p class="text-text-muted text-xs mb-5 max-w-sm">${err.message || 'The requested project could not be retrieved at this time.'}</p>
+                <button type="button" onclick="closeProjectModal()" class="px-5 py-2 rounded-xl bg-surface-container-high text-text-primary hover:bg-surface-container text-xs font-medium border border-border-subtle transition-colors">Close</button>
             </div>
         `;
     }
@@ -366,6 +424,43 @@ window.closeProjectModal = function() {
     if (!modalBackdrop) return;
     modalBackdrop.classList.add('opacity-0', 'pointer-events-none');
     modalBackdrop.classList.remove('opacity-100');
+    document.body.style.overflow = '';
+};
+
+// 6. Developer Avatar Lightbox Modal
+window.openAvatarModal = function() {
+    const modal = document.getElementById('avatar-lightbox-modal');
+    const imgEl = document.getElementById('avatar-lightbox-img');
+    const heroAvatar = document.getElementById('hero-avatar');
+    if (!modal) return;
+
+    if (imgEl && heroAvatar && heroAvatar.src && heroAvatar.style.display !== 'none') {
+        imgEl.src = heroAvatar.src;
+        imgEl.alt = heroAvatar.alt || 'Developer Portrait';
+    } else if (imgEl) {
+        imgEl.src = 'assets/img/hero/oluwatobi-portrait.jpg';
+    }
+
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.classList.add('opacity-100');
+    const card = document.getElementById('avatar-lightbox-card');
+    if (card) {
+        card.classList.remove('scale-95');
+        card.classList.add('scale-100');
+    }
+    document.body.style.overflow = 'hidden';
+};
+
+window.closeAvatarModal = function() {
+    const modal = document.getElementById('avatar-lightbox-modal');
+    if (!modal) return;
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    modal.classList.remove('opacity-100');
+    const card = document.getElementById('avatar-lightbox-card');
+    if (card) {
+        card.classList.remove('scale-100');
+        card.classList.add('scale-95');
+    }
     document.body.style.overflow = '';
 };
 
@@ -1057,6 +1152,29 @@ async function hydrateHomePage() {
                     }).join('');
                 }
             }
+
+            // 4. Architecture & Code Philosophy Badges
+            if (profile.philosophyCards && Array.isArray(profile.philosophyCards) && profile.philosophyCards.length > 0) {
+                const philContainer = document.getElementById('philosophy-cards-container');
+                if (philContainer) {
+                    const fallbackColors = ['#8b5cf6', '#10b981', '#0ea5e9'];
+                    philContainer.innerHTML = profile.philosophyCards.map((card, idx) => {
+                        const accentColor = card.accentColor || fallbackColors[idx % fallbackColors.length];
+                        return `
+                            <div class="bg-surface-card rounded-xl p-5 border border-border-subtle shadow-sm transition-all duration-200 group"
+                                 onmouseenter="this.style.borderColor='${accentColor}80'; this.style.boxShadow='0 10px 25px -5px ${accentColor}20';"
+                                 onmouseleave="this.style.borderColor=''; this.style.boxShadow='';">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform"
+                                     style="background-color: ${accentColor}1a; color: ${accentColor}; border: 1px solid ${accentColor}33;">
+                                    <span class="material-symbols-outlined text-[22px]">${card.icon || 'speed'}</span>
+                                </div>
+                                <h3 class="font-headline-sm text-base text-text-primary font-semibold mb-1">${card.title || ''}</h3>
+                                <p class="font-body-sm text-xs text-text-muted leading-relaxed">${card.description || ''}</p>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
         }
     } catch (e) {
         console.debug('[Home] Hydration deferred:', e.message);
@@ -1073,12 +1191,33 @@ document.addEventListener('DOMContentLoaded', () => {
     initProjectFilters();
     initContactForm();
 
-    // Trigger page-specific hydrations
+    // Trigger page-specific hydrations (instant 0ms if cached by SWR/Prefetch)
     hydrateContactPage();
     hydratePortfolioPage();
     hydrateArticlesPage();
     hydrateResumePage();
     hydrateHomePage();
+
+    // SWR Live Update Listener: seamlessly refresh UI if background revalidation detects changed data
+    window.addEventListener('portfolio:data-updated', (event) => {
+        const ep = event.detail?.endpoint;
+        if (ep === '/Projects') {
+            hydratePortfolioPage();
+        } else if (ep === '/Articles') {
+            hydrateArticlesPage();
+        } else if (ep === '/Resume') {
+            hydrateResumePage();
+        } else if (ep === '/Profile' || ep === '/Profile/hero') {
+            hydrateHomePage();
+        } else if (ep === '/Contact/info') {
+            hydrateContactPage();
+        }
+    });
+
+    // Idle Prefetch: Warm all other page caches during idle time for 0ms transitions
+    if (window.PortfolioApi && typeof window.PortfolioApi.prefetchAll === 'function') {
+        window.PortfolioApi.prefetchAll();
+    }
 
     // Modal listeners
     const modalCloseBtn = document.getElementById('case-study-close');
@@ -1103,6 +1242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') {
             closeProjectModal();
             closeArticleModal();
+            closeAvatarModal();
             const drawer = document.getElementById('mobile-menu-drawer');
             const backdrop = document.getElementById('mobile-menu-backdrop');
             if (drawer) drawer.classList.add('translate-x-full');

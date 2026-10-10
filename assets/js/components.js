@@ -308,6 +308,13 @@
             }
         });
 
+        // SWR live update listener for navigation
+        window.addEventListener('portfolio:data-updated', (event) => {
+            if (event.detail?.endpoint === '/Navigation') {
+                hydrateNavigationComponents();
+            }
+        });
+
         // Dispatch event so portfolio-core.js binds handlers to newly inserted DOM elements
         document.dispatchEvent(new CustomEvent('components:ready'));
     }
