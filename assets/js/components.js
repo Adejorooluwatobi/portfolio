@@ -7,20 +7,20 @@
 (function() {
     const HEADER_TEMPLATE = `<!-- Top Persistent Navigation Bar -->
 <header class="fixed top-0 left-0 right-0 z-50 bg-surface/85 backdrop-blur-xl border-b border-border-subtle">
-    <div class="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-4">
+    <div class="h-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-3 sm:gap-4">
         
         <!-- Brand & Availability -->
-        <div class="flex items-center gap-4">
-            <a class="group flex items-center gap-3" href="index.html">
-                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center transition-colors group-hover:bg-primary-container border border-border-subtle">
+        <div class="flex items-center gap-2.5 sm:gap-4 min-w-0">
+            <a class="group flex items-center gap-2.5 sm:gap-3 min-w-0" href="index.html">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-surface-container-high flex-shrink-0 flex items-center justify-center transition-colors group-hover:bg-primary-container border border-border-subtle">
                     <span class="font-code-md text-primary font-bold group-hover:text-on-primary-container">OA</span>
                 </div>
-                <div class="flex flex-col">
-                    <span id="header-brand-name" class="font-headline-sm text-text-primary leading-tight font-semibold">Oluwatobi Adejoro</span>
-                    <span id="header-primary-title" class="font-code-sm text-text-muted leading-tight">Software Engineer</span>
+                <div class="flex flex-col min-w-0">
+                    <span id="header-brand-name" class="font-headline-sm text-text-primary leading-tight font-semibold text-sm sm:text-base truncate">Oluwatobi Adejoro</span>
+                    <span id="header-primary-title" class="font-code-sm text-text-muted leading-tight text-[11px] sm:text-xs truncate">Software Engineer</span>
                 </div>
             </a>
-            <div class="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low border border-border-subtle">
+            <div class="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low border border-border-subtle flex-shrink-0">
                 <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
                 <span class="font-label-badge text-[11px] text-secondary tracking-wide">Available for opportunities</span>
             </div>
@@ -36,22 +36,23 @@
         </nav>
 
         <!-- Actions: Socials, CV Download, Theme Toggle, Mobile Menu Button -->
-        <div class="flex items-center gap-3">
-            <button type="button" class="theme-toggle-btn w-9 h-9 rounded-lg bg-surface-container-high/70 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-border-subtle" title="Toggle Light / Dark Mode" aria-label="Toggle Light / Dark Mode">
-                <span class="material-symbols-outlined theme-icon text-[20px]">light_mode</span>
+        <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <button type="button" class="theme-toggle-btn w-9 h-9 rounded-lg bg-surface-container-high/70 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-border-subtle flex-shrink-0" title="Toggle Light / Dark Mode" aria-label="Toggle Light / Dark Mode">
+                <span class="material-symbols-outlined theme-icon text-[19px] sm:text-[20px]">light_mode</span>
             </button>
-            <a class="w-9 h-9 rounded-lg bg-surface-container-high/70 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-border-subtle" href="https://github.com" rel="noopener noreferrer" target="_blank" title="GitHub">
+            <a class="hidden sm:flex w-9 h-9 rounded-lg bg-surface-container-high/70 items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-border-subtle flex-shrink-0" href="https://github.com" rel="noopener noreferrer" target="_blank" title="GitHub">
                 <span class="material-symbols-outlined text-[20px]">code</span>
             </a>
-            <a class="w-9 h-9 rounded-lg bg-surface-container-high/70 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-border-subtle" href="https://www.linkedin.com/in/adejoro-oluwatobi-6009411b5/" rel="noopener noreferrer" target="_blank" title="LinkedIn">
+            <a class="hidden sm:flex w-9 h-9 rounded-lg bg-surface-container-high/70 items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-border-subtle flex-shrink-0" href="https://www.linkedin.com/in/adejoro-oluwatobi-6009411b5/" rel="noopener noreferrer" target="_blank" title="LinkedIn">
                 <span class="material-symbols-outlined text-[20px]">share</span>
             </a>
-            <a class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-sm font-semibold hover:bg-primary hover:text-surface transition-all shadow-md download-cv-btn" href="#" data-cv-download="true" title="Download Verified Fullstack CV">
+            <a class="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-sm font-semibold hover:bg-primary hover:text-surface transition-all shadow-md download-cv-btn flex-shrink-0" href="#" data-cv-download="true" title="Download Verified Fullstack CV">
                 <span class="material-symbols-outlined text-[18px]">download</span>
                 <span>Download CV</span>
             </a>
-            <button id="mobile-menu-toggle" type="button" class="lg:hidden w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-text-primary hover:bg-surface-container-highest transition-colors border border-border-subtle" aria-label="Toggle Navigation Menu">
-                <span class="material-symbols-outlined text-[24px]">menu</span>
+            <!-- Mobile Hamburger Toggle -->
+            <button id="mobile-menu-toggle" type="button" class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-text-primary hover:bg-surface-container-highest transition-colors border border-border-subtle flex-shrink-0" aria-label="Toggle Navigation Menu">
+                <span class="material-symbols-outlined text-[22px] sm:text-[24px]">menu</span>
             </button>
         </div>
 
@@ -95,6 +96,16 @@
         </nav>
     </div>
     <div class="pt-6 border-t border-border-subtle space-y-3">
+        <div class="grid grid-cols-2 gap-2">
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="py-2.5 px-3 rounded-lg bg-surface-container-high text-text-primary text-xs font-semibold flex items-center justify-center gap-2 border border-border-subtle hover:bg-surface-container-highest transition-colors">
+                <span class="material-symbols-outlined text-[18px]">code</span>
+                <span>GitHub</span>
+            </a>
+            <a href="https://www.linkedin.com/in/adejoro-oluwatobi-6009411b5/" target="_blank" rel="noopener noreferrer" class="py-2.5 px-3 rounded-lg bg-surface-container-high text-text-primary text-xs font-semibold flex items-center justify-center gap-2 border border-border-subtle hover:bg-surface-container-highest transition-colors">
+                <span class="material-symbols-outlined text-[18px]">share</span>
+                <span>LinkedIn</span>
+            </a>
+        </div>
         <button type="button" class="theme-toggle-btn w-full py-2.5 px-4 rounded-lg bg-surface-container-high text-text-primary font-body-sm text-sm flex items-center justify-between border border-border-subtle">
             <span class="flex items-center gap-2">
                 <span class="material-symbols-outlined theme-icon text-[18px]">light_mode</span>
@@ -115,31 +126,31 @@
 
     const FOOTER_TEMPLATE = `<!-- Universal Persistent Footer -->
 <footer class="w-full bg-surface-container-lowest/90 backdrop-blur-xl border-t border-border-subtle mt-auto py-8">
-    <div class="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div class="flex flex-col items-center md:items-start gap-1">
-            <div class="flex items-center gap-2">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex flex-col items-center md:items-start text-center md:text-left gap-1">
+            <div class="flex flex-wrap items-center justify-center md:justify-start gap-2">
                 <span class="font-code-md text-primary font-bold">OA</span>
                 <span class="text-text-muted text-xs">•</span>
-                <span class="text-on-surface text-xs font-medium">© 2025 Oluwatobi Adejoro. All rights reserved.</span>
+                <span class="text-on-surface text-xs font-medium">© 2026 Oluwatobi Adejoro. All rights reserved.</span>
             </div>
             <p class="font-code-sm text-xs text-text-muted">Engineered with modern web standards, strict typing & high performance.</p>
         </div>
-        <div class="flex items-center gap-3">
-            <a class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-code-sm text-xs border border-border-subtle" href="https://github.com" rel="noopener noreferrer" target="_blank">
+        <div class="flex flex-wrap items-center justify-center md:justify-end gap-2 sm:gap-3 w-full md:w-auto">
+            <a class="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-code-sm text-xs border border-border-subtle" href="https://github.com" rel="noopener noreferrer" target="_blank">
                 <span class="material-symbols-outlined text-[16px]">terminal</span>
                 <span>GitHub</span>
             </a>
-            <a class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-code-sm text-xs border border-border-subtle" href="https://www.linkedin.com/in/adejoro-oluwatobi-6009411b5/" rel="noopener noreferrer" target="_blank">
+            <a class="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-code-sm text-xs border border-border-subtle" href="https://www.linkedin.com/in/adejoro-oluwatobi-6009411b5/" rel="noopener noreferrer" target="_blank">
                 <span class="material-symbols-outlined text-[16px]">share</span>
                 <span>LinkedIn</span>
             </a>
-            <a class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-code-sm text-xs border border-border-subtle" href="https://x.com/tgold_adejoro" rel="noopener noreferrer" target="_blank">
+            <a class="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-code-sm text-xs border border-border-subtle" href="https://x.com/tgold_adejoro" rel="noopener noreferrer" target="_blank">
                 <span class="font-code-sm text-xs font-bold">𝕏</span>
                 <span>Twitter</span>
             </a>
-            <button onclick="copyEmailToClipboard('Adejorotgold1@yahoo.com')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-code-sm text-xs border border-border-subtle">
+            <button onclick="copyEmailToClipboard('Adejorotgold1@yahoo.com')" class="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-code-sm text-xs border border-border-subtle" title="Click to copy email">
                 <span class="material-symbols-outlined text-[16px]">content_copy</span>
-                <span>Adejorotgold1@yahoo.com</span>
+                <span class="truncate max-w-[170px] sm:max-w-none">Adejorotgold1@yahoo.com</span>
             </button>
         </div>
     </div>
@@ -305,6 +316,13 @@
                         btn.innerHTML = origHtml;
                     }
                 }
+            }
+        });
+
+        // SWR live update listener for navigation
+        window.addEventListener('portfolio:data-updated', (event) => {
+            if (event.detail?.endpoint === '/Navigation') {
+                hydrateNavigationComponents();
             }
         });
 

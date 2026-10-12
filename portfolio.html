@@ -105,15 +105,29 @@
                         </p>
                     </div>
 
-                    <!-- Category Filter Buttons (Dynamically updated from backend categories) -->
-                    <div id="project-categories-filter" class="flex flex-wrap items-center gap-2">
-                        <span class="font-code-sm text-xs text-text-muted mr-1">Filter:</span>
-                        <button type="button" class="project-filter-btn px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-code-sm text-xs font-semibold transition-all" data-filter="all">All</button>
+                    <!-- Category Filter Buttons & View Switcher -->
+                    <div class="flex flex-wrap items-center justify-between md:justify-end gap-3 w-full md:w-auto">
+                        <div id="project-categories-filter" class="flex flex-wrap items-center gap-2">
+                            <span class="font-code-sm text-xs text-text-muted mr-1">Filter:</span>
+                            <button type="button" class="project-filter-btn px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-code-sm text-xs font-semibold transition-all" data-filter="all">All</button>
+                        </div>
+
+                        <!-- View Mode Switcher -->
+                        <div class="flex items-center p-1 rounded-xl bg-surface-container-high border border-border-subtle ml-auto md:ml-0" id="view-mode-toggle">
+                            <button type="button" id="btn-view-grid" class="view-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all text-text-primary bg-surface-card shadow-sm" title="Grid View" aria-label="Grid View">
+                                <span class="material-symbols-outlined text-[18px]">grid_view</span>
+                                <span class="hidden sm:inline">Grid</span>
+                            </button>
+                            <button type="button" id="btn-view-list" class="view-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all text-text-muted hover:text-text-primary" title="List View" aria-label="List View">
+                                <span class="material-symbols-outlined text-[18px]">view_list</span>
+                                <span class="hidden sm:inline">List</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Projects Grid (Hydrated dynamically from backend API) -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="projects-grid">
+                <div class="grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8" id="projects-grid">
                     
                     <!-- Loading Skeleton Placeholder 1 -->
                     <div class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col animate-pulse">

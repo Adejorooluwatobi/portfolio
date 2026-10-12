@@ -103,11 +103,21 @@
                         <p class="font-body-md text-sm sm:text-base text-text-secondary mt-2 max-w-2xl">
                             In-depth articles covering backend microservices, modular NestJS architecture, TypeScript patterns, and high-performance web engineering.
                         </p>
+                    <!-- View Mode Switcher -->
+                    <div class="flex items-center p-1 rounded-xl bg-surface-container-high border border-border-subtle ml-auto md:ml-0" id="articles-view-mode-toggle">
+                        <button type="button" id="btn-articles-grid" class="view-mode-btn px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all text-primary bg-surface-card shadow-sm border border-border-subtle" title="Grid View" aria-label="Grid View">
+                            <span class="material-symbols-outlined text-[18px]">grid_view</span>
+                            <span class="hidden sm:inline">Grid</span>
+                        </button>
+                        <button type="button" id="btn-articles-list" class="view-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all text-text-muted hover:text-text-primary" title="List View" aria-label="List View">
+                            <span class="material-symbols-outlined text-[18px]">view_list</span>
+                            <span class="hidden sm:inline">List</span>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Articles Grid (Hydrated dynamically from backend API) -->
-                <div id="articles-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div id="articles-grid" class="grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8">
                     
                     <!-- Loading Skeleton Placeholder 1 -->
                     <article class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col animate-pulse">
