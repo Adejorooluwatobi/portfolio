@@ -125,6 +125,23 @@ function initProjectFilters() {
     const projectCards = document.querySelectorAll('.project-item');
 
     if (filterButtons.length && projectCards.length) {
+        const activeBtn = document.querySelector('.project-filter-btn.bg-primary-container');
+        const initialFilter = activeBtn ? (activeBtn.getAttribute('data-filter') || 'all') : 'all';
+
+        if (initialFilter !== 'all') {
+            projectCards.forEach(card => {
+                const categories = (card.getAttribute('data-category') || '').split(' ');
+                if (categories.includes(initialFilter) || card.classList.contains(initialFilter)) {
+                    card.style.display = 'flex';
+                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1)';
+                } else {
+                    card.style.display = 'none';
+                    card.style.opacity = '0';
+                }
+            });
+        }
+
         filterButtons.forEach(btn => {
             btn.onclick = () => {
                 filterButtons.forEach(b => {
@@ -664,6 +681,155 @@ async function hydrateContactPage() {
     }
 }
 
+let cachedPortfolioProjects = null;
+let currentPortfolioViewMode = localStorage.getItem('portfolio_view_mode') || 'grid';
+
+function updatePortfolioViewButtons(mode) {
+    const btnGrid = document.getElementById('btn-view-grid');
+    const btnList = document.getElementById('btn-view-list');
+    if (!btnGrid || !btnList) return;
+
+    if (mode === 'list') {
+        btnList.className = 'view-mode-btn px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all text-primary bg-surface-card shadow-sm border border-border-subtle';
+        btnGrid.className = 'view-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all text-text-muted hover:text-text-primary';
+    } else {
+        btnGrid.className = 'view-mode-btn px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all text-primary bg-surface-card shadow-sm border border-border-subtle';
+        btnList.className = 'view-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all text-text-muted hover:text-text-primary';
+    }
+}
+
+function renderProjectsMarkup(projects, mode) {
+    const grid = document.getElementById('projects-grid');
+    if (!grid) return;
+
+    if (mode === 'list') {
+        grid.className = 'flex flex-col gap-4';
+    } else {
+        grid.className = 'grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8';
+    }
+
+    grid.innerHTML = projects.map(p => {
+        const categoryClasses = (p.categorySlugs || []).join(' ') + ' all';
+        const categoryAttr = (p.categorySlugs || []).join(' ') + ' all';
+        const mainCategory = p.categoryBadgeText || 'Fullstack Project';
+        const tags = p.tags || [];
+        const projectImgUrl = p.imageUrl ? (window.PortfolioApi ? window.PortfolioApi.formatImageUrl(p.imageUrl) : p.imageUrl) : null;
+
+        if (mode === 'list') {
+            const listTagsHtml = tags.slice(0, 4).map(t => {
+                const name = typeof t === 'string' ? t : t.tagName;
+                return `<span class="font-label-badge text-[11px] px-2 py-0.5 rounded bg-surface-container text-text-primary border border-border-subtle">${name}</span>`;
+            }).join('');
+
+            const thumbHtml = projectImgUrl ?
+                `<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-lg" src="${projectImgUrl}" alt="${p.imageAlt || p.title}"/>` :
+                `<span class="material-symbols-outlined text-[24px] text-primary">${p.iconKey || 'layers'}</span>`;
+
+            return `
+                <div class="project-item ${categoryClasses} bg-surface-card rounded-2xl p-4 sm:p-5 backdrop-blur-xl border border-border-subtle shadow-md hover:border-primary/50 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 group" data-category="${categoryAttr}">
+                    <div class="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-surface-container-high border border-border-subtle flex-shrink-0 flex items-center justify-center p-1">
+                            ${thumbHtml}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <span class="font-label-badge text-[11px] px-2.5 py-0.5 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20">${mainCategory}</span>
+                                ${p.timeframe ? `<span class="font-code-sm text-[11px] text-text-muted">${p.timeframe}</span>` : ''}
+                                ${p.clientName ? `<span class="font-code-sm text-[11px] text-text-muted truncate max-w-[140px]">• ${p.clientName}</span>` : ''}
+                            </div>
+                            <h3 class="font-headline-md text-base sm:text-lg text-text-primary font-bold truncate">${p.title}</h3>
+                            <p class="font-body-sm text-xs sm:text-sm text-text-secondary line-clamp-1 sm:line-clamp-2 mt-0.5">
+                                ${p.shortDescription || ''}
+                            </p>
+                            <div class="flex flex-wrap gap-1.5 mt-2">
+                                ${listTagsHtml}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-border-subtle flex-shrink-0 justify-end">
+                        ${p.hasCaseStudy ? `
+                            <button type="button" onclick="openProjectModal('${p.id}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-xs font-semibold hover:bg-primary hover:text-surface transition-all shadow-sm">
+                                <span>Case Study</span>
+                                <span class="material-symbols-outlined text-[16px]">visibility</span>
+                            </button>
+                        ` : ''}
+                        ${p.liveUrl ? `
+                            <a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-container text-text-secondary hover:text-text-primary hover:bg-surface-container-high font-code-sm text-xs transition-colors border border-border-subtle" title="Inspect Live Deployment">
+                                <span>Live</span>
+                                <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                            </a>
+                        ` : ''}
+                        ${p.githubUrl ? `
+                            <a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-container text-text-secondary hover:text-text-primary hover:bg-surface-container-high font-code-sm text-xs transition-colors border border-border-subtle" title="Inspect Code Repository">
+                                <span>GitHub</span>
+                                <span class="material-symbols-outlined text-[14px]">code</span>
+                            </a>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 2-in-a-Row Responsive Grid Card
+        const gridTags = tags.slice(0, 3);
+        const tagsHtml = gridTags.map(t => {
+            const name = typeof t === 'string' ? t : t.tagName;
+            return `<span class="font-label-badge text-[9px] sm:text-xs px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded bg-surface-container text-text-primary border border-border-subtle">${name}</span>`;
+        }).join('');
+
+        const imageHtml = projectImgUrl ? 
+            `<img class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl" src="${projectImgUrl}" alt="${p.imageAlt || p.title}"/>` :
+            `<div class="w-10 h-10 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-primary-container/20 text-primary flex items-center justify-center border border-primary/20"><span class="material-symbols-outlined text-[22px] sm:text-[32px]">${p.iconKey || 'layers'}</span></div>`;
+
+        return `
+            <div class="project-item ${categoryClasses} bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300" data-category="${categoryAttr}">
+                <div class="h-32 sm:h-48 md:h-64 overflow-hidden relative bg-surface-container-high flex items-center justify-center p-3 sm:p-6 md:p-8">
+                    ${imageHtml}
+                    <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
+                    <span class="absolute top-2 left-2 sm:top-4 sm:left-4 font-label-badge text-[10px] sm:text-xs px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20 backdrop-blur-md">${mainCategory}</span>
+                    <span class="absolute top-2 right-2 sm:top-4 sm:right-4 font-code-sm text-[10px] sm:text-xs px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-surface-container-lowest/80 text-secondary border border-secondary/20 backdrop-blur-md hidden xs:inline-flex">${p.timeframe || ''}</span>
+                </div>
+                <div class="p-3.5 sm:p-5 md:p-7 flex flex-col flex-grow">
+                    <div class="flex items-center justify-between mb-1 sm:mb-2">
+                        <h2 class="font-headline-md text-xs sm:text-base md:text-xl text-text-primary font-bold line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] flex items-center">${p.title}</h2>
+                    </div>
+                    <p class="font-body-md text-[11px] sm:text-xs md:text-sm text-text-secondary mb-2 sm:mb-5 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-3">
+                        ${p.shortDescription || ''}
+                    </p>
+                    <div class="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-6">
+                        ${tagsHtml}
+                    </div>
+                    <div class="mt-auto pt-2.5 sm:pt-4 flex flex-wrap items-center justify-between gap-1.5 sm:gap-3 border-t border-border-subtle">
+                        <div class="flex items-center gap-1 sm:gap-2">
+                            ${p.hasCaseStudy ? `
+                                <button type="button" onclick="openProjectModal('${p.id}')" class="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-[10px] sm:text-xs font-semibold hover:bg-primary hover:text-surface transition-all shadow-md">
+                                    <span>Case Study</span>
+                                    <span class="material-symbols-outlined text-[13px] sm:text-[16px]">visibility</span>
+                                </button>
+                            ` : ''}
+                            ${p.liveUrl ? `
+                                <a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-surface-container text-text-secondary hover:text-text-primary hover:bg-surface-container-high font-code-sm text-[10px] sm:text-xs transition-colors border border-border-subtle" title="Inspect Live Deployment">
+                                    <span>Live</span>
+                                    <span class="material-symbols-outlined text-[12px] sm:text-[14px]">open_in_new</span>
+                                </a>
+                            ` : ''}
+                            ${p.githubUrl ? `
+                                <a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-surface-container text-text-secondary hover:text-text-primary hover:bg-surface-container-high font-code-sm text-[10px] sm:text-xs transition-colors border border-border-subtle" title="Inspect Code Repository">
+                                    <span>GitHub</span>
+                                    <span class="material-symbols-outlined text-[12px] sm:text-[14px]">code</span>
+                                </a>
+                            ` : ''}
+                        </div>
+                        <span class="font-code-sm text-[10px] sm:text-[11px] text-text-muted truncate max-w-[80px] sm:max-w-none">${p.clientName || 'Production'}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    initProjectFilters();
+}
+
 /** Hydrate Featured Works / Portfolio Grid */
 async function hydratePortfolioPage() {
     const grid = document.getElementById('projects-grid');
@@ -689,6 +855,8 @@ async function hydratePortfolioPage() {
             return;
         }
 
+        cachedPortfolioProjects = data.projects;
+
         // Dynamic Category Filter Pills from backend categories
         const filterContainer = document.getElementById('project-categories-filter');
         if (filterContainer && data.categories && Array.isArray(data.categories) && data.categories.length) {
@@ -705,68 +873,30 @@ async function hydratePortfolioPage() {
             filterContainer.innerHTML = pillsHtml;
         }
 
-        grid.innerHTML = data.projects.map(p => {
-            const categoryClasses = (p.categorySlugs || []).join(' ') + ' all';
-            const categoryAttr = (p.categorySlugs || []).join(' ') + ' all';
-            const mainCategory = p.categoryBadgeText || 'Fullstack Project';
-            const tags = p.tags || [];
-            const tagsHtml = tags.map(t => {
-                const name = typeof t === 'string' ? t : t.tagName;
-                return `<span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">${name}</span>`;
-            }).join('');
+        // Initialize View Mode Buttons
+        updatePortfolioViewButtons(currentPortfolioViewMode);
+        const btnGrid = document.getElementById('btn-view-grid');
+        const btnList = document.getElementById('btn-view-list');
+        if (btnGrid) {
+            btnGrid.onclick = () => {
+                if (currentPortfolioViewMode === 'grid') return;
+                currentPortfolioViewMode = 'grid';
+                localStorage.setItem('portfolio_view_mode', 'grid');
+                updatePortfolioViewButtons('grid');
+                if (cachedPortfolioProjects) renderProjectsMarkup(cachedPortfolioProjects, 'grid');
+            };
+        }
+        if (btnList) {
+            btnList.onclick = () => {
+                if (currentPortfolioViewMode === 'list') return;
+                currentPortfolioViewMode = 'list';
+                localStorage.setItem('portfolio_view_mode', 'list');
+                updatePortfolioViewButtons('list');
+                if (cachedPortfolioProjects) renderProjectsMarkup(cachedPortfolioProjects, 'list');
+            };
+        }
 
-            const projectImgUrl = p.imageUrl ? (window.PortfolioApi ? window.PortfolioApi.formatImageUrl(p.imageUrl) : p.imageUrl) : null;
-            const imageHtml = projectImgUrl ? 
-                `<img class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl" src="${projectImgUrl}" alt="${p.imageAlt || p.title}"/>` :
-                `<div class="w-16 h-16 rounded-2xl bg-primary-container/20 text-primary flex items-center justify-center border border-primary/20"><span class="material-symbols-outlined text-[32px]">${p.iconKey || 'layers'}</span></div>`;
-
-            return `
-                <div class="project-item ${categoryClasses} bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300" data-category="${categoryAttr}">
-                    <div class="h-64 overflow-hidden relative bg-surface-container-high flex items-center justify-center p-8">
-                        ${imageHtml}
-                        <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
-                        <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20 backdrop-blur-md">${mainCategory}</span>
-                        <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-secondary border border-secondary/20 backdrop-blur-md">${p.timeframe || ''}</span>
-                    </div>
-                    <div class="p-7 flex flex-col flex-grow">
-                        <div class="flex items-center justify-between mb-2">
-                            <h2 class="font-headline-md text-xl text-text-primary font-bold">${p.title}</h2>
-                        </div>
-                        <p class="font-body-md text-sm text-text-secondary mb-5 leading-relaxed">
-                            ${p.shortDescription || ''}
-                        </p>
-                        <div class="flex flex-wrap gap-2 mb-6">
-                            ${tagsHtml}
-                        </div>
-                        <div class="mt-auto pt-4 flex items-center justify-between gap-3 border-t border-border-subtle">
-                            <div class="flex items-center gap-2">
-                                ${p.hasCaseStudy ? `
-                                    <button type="button" onclick="openProjectModal('${p.id}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-xs font-semibold hover:bg-primary hover:text-surface transition-all shadow-md">
-                                        <span>Case Study</span>
-                                        <span class="material-symbols-outlined text-[16px]">visibility</span>
-                                    </button>
-                                ` : ''}
-                                ${p.liveUrl ? `
-                                    <a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-container text-text-secondary hover:text-text-primary hover:bg-surface-container-high font-code-sm text-xs transition-colors border border-border-subtle" title="Inspect Live Deployment">
-                                        <span>Live</span>
-                                        <span class="material-symbols-outlined text-[14px]">open_in_new</span>
-                                    </a>
-                                ` : ''}
-                                ${p.githubUrl ? `
-                                    <a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-container text-text-secondary hover:text-text-primary hover:bg-surface-container-high font-code-sm text-xs transition-colors border border-border-subtle" title="Inspect Code Repository">
-                                        <span>GitHub</span>
-                                        <span class="material-symbols-outlined text-[14px]">code</span>
-                                    </a>
-                                ` : ''}
-                            </div>
-                            <span class="font-code-sm text-[11px] text-text-muted">${p.clientName || 'Production'}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        initProjectFilters();
+        renderProjectsMarkup(cachedPortfolioProjects, currentPortfolioViewMode);
     } catch (e) {
         console.warn('[Portfolio] Failed to load projects:', e.message);
         grid.innerHTML = `
@@ -785,6 +915,146 @@ async function hydratePortfolioPage() {
             </div>
         `;
     }
+}
+
+let currentArticlesViewMode = localStorage.getItem('articles_view_mode') || 'grid';
+
+function updateArticlesViewButtons(mode) {
+    const btnGrid = document.getElementById('btn-articles-grid');
+    const btnList = document.getElementById('btn-articles-list');
+    if (!btnGrid || !btnList) return;
+
+    if (mode === 'list') {
+        btnList.className = 'view-mode-btn px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all text-primary bg-surface-card shadow-sm border border-border-subtle';
+        btnGrid.className = 'view-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all text-text-muted hover:text-text-primary';
+    } else {
+        btnGrid.className = 'view-mode-btn px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all text-primary bg-surface-card shadow-sm border border-border-subtle';
+        btnList.className = 'view-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all text-text-muted hover:text-text-primary';
+    }
+}
+
+function renderArticlesMarkup(articles, mode) {
+    const grid = document.getElementById('articles-grid');
+    if (!grid) return;
+
+    if (mode === 'list') {
+        grid.className = 'flex flex-col gap-4';
+    } else {
+        grid.className = 'grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8';
+    }
+
+    grid.innerHTML = articles.map(a => {
+        const tags = a.tags || [];
+        const dateStr = a.publishedAt ? new Date(a.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Published';
+        const readTime = a.readTimeMinutes ? `${a.readTimeMinutes} min read` : '5 min read';
+        const rawArticleImg = a.imageUrl || 'assets/img/blog/blog-img1.png';
+        const image = window.PortfolioApi ? window.PortfolioApi.formatImageUrl(rawArticleImg) : rawArticleImg;
+
+        const linksHtml = (a.links && a.links.length > 0)
+            ? a.links.map(l => `
+                <a class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-container text-text-primary hover:bg-surface-container-high hover:text-primary font-body-md text-xs font-medium transition-all border border-border-subtle" href="${l.url}" rel="noopener noreferrer" target="_blank">
+                    <span>${l.title || 'Link'}</span>
+                    <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                </a>
+            `).join('')
+            : `
+                ${a.linkedinUrl ? `
+                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-container text-text-primary hover:bg-surface-container-high hover:text-primary font-body-md text-xs font-medium transition-all border border-border-subtle" href="${a.linkedinUrl}" rel="noopener noreferrer" target="_blank">
+                        <span>LinkedIn</span>
+                        <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                    </a>
+                ` : ''}
+                ${a.twitterUrl ? `
+                    <a class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-surface-container text-text-secondary hover:text-text-primary font-code-sm text-xs transition-colors border border-border-subtle" href="${a.twitterUrl}" rel="noopener noreferrer" target="_blank" title="Discussion">
+                        <span>X / Thread</span>
+                    </a>
+                ` : ''}
+            `;
+
+        if (mode === 'list') {
+            const listTagsHtml = tags.slice(0, 4).map(t => {
+                const name = typeof t === 'string' ? t : (t.tagName || t.name);
+                return `<span class="font-label-badge text-[11px] px-2 py-0.5 rounded bg-surface-container text-text-primary border border-border-subtle">${name}</span>`;
+            }).join('');
+
+            return `
+                <article class="article-item bg-surface-card rounded-2xl p-4 sm:p-5 backdrop-blur-xl border border-border-subtle shadow-md hover:border-primary/50 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 group">
+                    <div class="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                        <div onclick="openArticleModal('${a.id}')" class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-surface-container-high border border-border-subtle flex-shrink-0 cursor-pointer">
+                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="${image}" alt="${a.imageAlt || a.title}"/>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <span class="font-label-badge text-[11px] px-2.5 py-0.5 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20">${a.category || 'Engineering'}</span>
+                                <span class="font-code-sm text-[11px] text-text-muted">${readTime}</span>
+                                <span class="font-code-sm text-[11px] text-text-muted">• ${dateStr}</span>
+                            </div>
+                            <h2 onclick="openArticleModal('${a.id}')" class="font-headline-md text-base sm:text-lg text-text-primary font-bold truncate cursor-pointer hover:text-primary transition-colors">
+                                ${a.title}
+                            </h2>
+                            <p class="font-body-sm text-xs sm:text-sm text-text-secondary line-clamp-1 sm:line-clamp-2 mt-0.5">
+                                ${a.excerpt || ''}
+                            </p>
+                            <div class="flex flex-wrap gap-1.5 mt-2">
+                                ${listTagsHtml}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-border-subtle flex-shrink-0 justify-end">
+                        <button type="button" onclick="openArticleModal('${a.id}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-xs font-semibold hover:bg-primary hover:text-surface transition-all shadow-sm">
+                            <span class="material-symbols-outlined text-[16px]">visibility</span>
+                            <span>Details</span>
+                        </button>
+                        ${linksHtml}
+                    </div>
+                </article>
+            `;
+        }
+
+        // 2-in-a-Row Responsive Grid Card
+        const gridTags = tags.slice(0, 3);
+        const tagsHtml = gridTags.map(t => {
+            const name = typeof t === 'string' ? t : (t.tagName || t.name);
+            return `<span class="font-label-badge text-[9px] sm:text-xs px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded bg-surface-container text-text-primary border border-border-subtle">${name}</span>`;
+        }).join('');
+
+        return `
+            <article class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300">
+                <div onclick="openArticleModal('${a.id}')" class="h-32 sm:h-44 md:h-60 overflow-hidden relative bg-surface-container-high cursor-pointer">
+                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="${image}" alt="${a.imageAlt || a.title}"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
+                    <span class="absolute top-2 left-2 sm:top-4 sm:left-4 font-label-badge text-[10px] sm:text-xs px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20 backdrop-blur-md">${a.category || 'Engineering'}</span>
+                    <span class="absolute top-2 right-2 sm:top-4 sm:right-4 font-code-sm text-[10px] sm:text-xs px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-surface-container-lowest/80 text-text-muted border border-border-subtle backdrop-blur-md hidden xs:inline-flex">${readTime}</span>
+                </div>
+                <div class="p-3.5 sm:p-5 md:p-7 flex flex-col flex-grow">
+                    <div class="flex items-center gap-1.5 font-code-sm text-[10px] sm:text-xs text-text-muted mb-1.5">
+                        <span>${dateStr}</span>
+                        <span>•</span>
+                        <span class="text-secondary font-medium truncate max-w-[120px] sm:max-w-none">${a.publicationType || 'Software Development'}</span>
+                    </div>
+                    <h2 onclick="openArticleModal('${a.id}')" class="font-headline-md text-xs sm:text-base md:text-xl text-text-primary font-bold mb-1.5 sm:mb-3 cursor-pointer hover:text-primary transition-colors line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] flex items-center">
+                        ${a.title}
+                    </h2>
+                    <p class="font-body-md text-[11px] sm:text-xs md:text-sm text-text-secondary mb-2 sm:mb-6 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-3">
+                        ${a.excerpt || ''}
+                    </p>
+                    <div class="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-6">
+                        ${tagsHtml}
+                    </div>
+                    <div class="mt-auto pt-2.5 sm:pt-4 flex flex-wrap items-center justify-between gap-1.5 sm:gap-3 border-t border-border-subtle">
+                        <div class="flex items-center gap-1 sm:gap-2 flex-wrap">
+                            <button type="button" onclick="openArticleModal('${a.id}')" class="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-surface-container-high text-text-primary hover:bg-primary-container hover:text-on-primary-container font-headline-sm text-[10px] sm:text-xs font-medium transition-all border border-border-subtle shadow-sm">
+                                <span class="material-symbols-outlined text-[13px] sm:text-[15px]">visibility</span>
+                                <span>Details</span>
+                            </button>
+                            ${linksHtml}
+                        </div>
+                        <span class="font-code-sm text-[10px] sm:text-[11px] text-text-muted truncate max-w-[90px] sm:max-w-none">${a.footerAnnotation || 'Oluwatobi Adejoro'}</span>
+                    </div>
+                </div>
+            </article>
+        `;
+    }).join('');
 }
 
 /** Hydrate Articles & Publications Grid */
@@ -810,79 +1080,33 @@ async function hydrateArticlesPage() {
             return;
         }
 
-        // Store articles in memory for instant modal viewing
+        // Store articles in memory for instant modal viewing & view switching
         window._loadedArticles = articles;
 
-        grid.innerHTML = articles.map(a => {
-            const tags = a.tags || [];
-            const tagsHtml = tags.map(t => {
-                const name = typeof t === 'string' ? t : (t.tagName || t.name);
-                return `<span class="font-label-badge text-xs px-2.5 py-1 rounded bg-surface-container text-text-primary border border-border-subtle">${name}</span>`;
-            }).join('');
+        // Initialize Articles View Mode Buttons
+        updateArticlesViewButtons(currentArticlesViewMode);
+        const btnGrid = document.getElementById('btn-articles-grid');
+        const btnList = document.getElementById('btn-articles-list');
+        if (btnGrid) {
+            btnGrid.onclick = () => {
+                if (currentArticlesViewMode === 'grid') return;
+                currentArticlesViewMode = 'grid';
+                localStorage.setItem('articles_view_mode', 'grid');
+                updateArticlesViewButtons('grid');
+                if (window._loadedArticles) renderArticlesMarkup(window._loadedArticles, 'grid');
+            };
+        }
+        if (btnList) {
+            btnList.onclick = () => {
+                if (currentArticlesViewMode === 'list') return;
+                currentArticlesViewMode = 'list';
+                localStorage.setItem('articles_view_mode', 'list');
+                updateArticlesViewButtons('list');
+                if (window._loadedArticles) renderArticlesMarkup(window._loadedArticles, 'list');
+            };
+        }
 
-            const dateStr = a.publishedAt ? new Date(a.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Published';
-            const readTime = a.readTimeMinutes ? `${a.readTimeMinutes} min read` : '5 min read';
-            const rawArticleImg = a.imageUrl || 'assets/img/blog/blog-img1.png';
-            const image = window.PortfolioApi ? window.PortfolioApi.formatImageUrl(rawArticleImg) : rawArticleImg;
-
-            const linksHtml = (a.links && a.links.length > 0)
-                ? a.links.map(l => `
-                    <a class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-container text-text-primary hover:bg-surface-container-high hover:text-primary font-body-md text-xs font-medium transition-all border border-border-subtle" href="${l.url}" rel="noopener noreferrer" target="_blank">
-                        <span>${l.title || 'Link'}</span>
-                        <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
-                    </a>
-                `).join('')
-                : `
-                    ${a.linkedinUrl ? `
-                        <a class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-container text-text-primary hover:bg-surface-container-high hover:text-primary font-body-md text-xs font-medium transition-all border border-border-subtle" href="${a.linkedinUrl}" rel="noopener noreferrer" target="_blank">
-                            <span>LinkedIn</span>
-                            <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
-                        </a>
-                    ` : ''}
-                    ${a.twitterUrl ? `
-                        <a class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-surface-container text-text-secondary hover:text-text-primary font-code-sm text-xs transition-colors border border-border-subtle" href="${a.twitterUrl}" rel="noopener noreferrer" target="_blank" title="Discussion">
-                            <span>X / Thread</span>
-                        </a>
-                    ` : ''}
-                `;
-
-            return `
-                <article class="bg-surface-card rounded-2xl overflow-hidden backdrop-blur-xl border border-border-subtle shadow-xl flex flex-col group hover:border-primary/50 transition-all duration-300">
-                    <div onclick="openArticleModal('${a.id}')" class="h-60 overflow-hidden relative bg-surface-container-high cursor-pointer">
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="${image}" alt="${a.imageAlt || a.title}"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent pointer-events-none"></div>
-                        <span class="absolute top-4 left-4 font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-primary border border-primary/20 backdrop-blur-md">${a.category || 'Engineering'}</span>
-                        <span class="absolute top-4 right-4 font-code-sm text-xs px-3 py-1 rounded-full bg-surface-container-lowest/80 text-text-muted border border-border-subtle backdrop-blur-md">${readTime}</span>
-                    </div>
-                    <div class="p-7 flex flex-col flex-grow">
-                        <div class="flex items-center gap-2 font-code-sm text-xs text-text-muted mb-2">
-                            <span>${dateStr}</span>
-                            <span>•</span>
-                            <span class="text-secondary font-medium">${a.publicationType || 'Software Development Guide'}</span>
-                        </div>
-                        <h2 onclick="openArticleModal('${a.id}')" class="font-headline-md text-xl text-text-primary font-bold mb-3 cursor-pointer hover:text-primary transition-colors">
-                            ${a.title}
-                        </h2>
-                        <p class="font-body-md text-sm text-text-secondary mb-6 leading-relaxed">
-                            ${a.excerpt || ''}
-                        </p>
-                        <div class="flex flex-wrap gap-2 mb-6">
-                            ${tagsHtml}
-                        </div>
-                        <div class="mt-auto pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border-subtle">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <button type="button" onclick="openArticleModal('${a.id}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-container-high text-text-primary hover:bg-primary-container hover:text-on-primary-container font-body-md text-xs font-medium transition-all border border-border-subtle shadow-sm">
-                                    <span class="material-symbols-outlined text-[15px]">visibility</span>
-                                    <span>Details</span>
-                                </button>
-                                ${linksHtml}
-                            </div>
-                            <span class="font-code-sm text-[11px] text-text-muted">${a.footerAnnotation || 'Oluwatobi Adejoro'}</span>
-                        </div>
-                    </div>
-                </article>
-            `;
-        }).join('');
+        renderArticlesMarkup(articles, currentArticlesViewMode);
     } catch (e) {
         console.warn('[Articles] Failed to load articles:', e.message);
         grid.innerHTML = `
@@ -1122,29 +1346,31 @@ async function hydrateHomePage() {
                         const accent = fallbackAccents[idx % fallbackAccents.length];
                         const customColor = card.accentColor || null;
                         const iconBoxStyle = customColor ? `style="background-color: ${customColor}22; color: ${customColor}; border-color: ${customColor}44;"` : '';
-                        const iconBoxClass = customColor ? 'w-12 h-12 rounded-xl flex items-center justify-center border shadow-sm' : `w-12 h-12 rounded-xl ${accent.iconBox} flex items-center justify-center border`;
+                        const iconBoxClass = customColor ? 'w-9 h-9 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border shadow-sm flex-shrink-0' : `w-9 h-9 sm:w-12 sm:h-12 rounded-xl ${accent.iconBox} flex items-center justify-center border flex-shrink-0`;
                         const cardHoverAttrs = customColor ? `style="--card-accent: ${customColor};" onmouseenter="this.style.borderColor='${customColor}66'" onmouseleave="this.style.borderColor=''"` : '';
                         const cardBorderClass = customColor ? 'hover:shadow-lg' : accent.border;
 
                         const rawTags = card.tags || [];
                         const tagsHtml = rawTags.map(t => {
                             const tagName = typeof t === 'string' ? t : (t.tagName || '');
-                            return `<span class="font-label-badge text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface border border-border-subtle">${tagName}</span>`;
+                            return `<span class="font-label-badge text-[10px] sm:text-xs px-2 py-0.5 sm:px-3 sm:py-1 rounded-md sm:rounded-full bg-surface-container-high text-on-surface border border-border-subtle">${tagName}</span>`;
                         }).join('');
 
                         return `
-                            <div class="bg-surface-card rounded-2xl p-8 backdrop-blur-xl border border-border-subtle relative overflow-hidden group ${cardBorderClass} transition-all duration-300" ${cardHoverAttrs}>
-                                <div class="flex items-start justify-between mb-6">
-                                    <div class="${iconBoxClass}" ${iconBoxStyle}>
-                                        <span class="material-symbols-outlined text-[28px]">${card.icon || 'palette'}</span>
+                            <div class="bg-surface-card rounded-2xl p-3.5 sm:p-6 md:p-8 backdrop-blur-xl border border-border-subtle relative overflow-hidden group ${cardBorderClass} transition-all duration-300 flex flex-col justify-between" ${cardHoverAttrs}>
+                                <div>
+                                    <div class="flex items-start justify-between mb-3 sm:mb-6">
+                                        <div class="${iconBoxClass}" ${iconBoxStyle}>
+                                            <span class="material-symbols-outlined text-[20px] sm:text-[28px]">${card.icon || 'palette'}</span>
+                                        </div>
+                                        <span class="font-code-sm text-[10px] sm:text-xs text-text-muted truncate ml-1">${card.indexTag || ''}</span>
                                     </div>
-                                    <span class="font-code-sm text-xs text-text-muted">${card.indexTag || ''}</span>
+                                    <h3 class="font-headline-md text-sm sm:text-lg md:text-xl text-text-primary font-semibold mb-1.5 sm:mb-3 line-clamp-2 min-h-[2.2rem] sm:min-h-[2.8rem] flex items-center">${card.title}</h3>
+                                    <p class="font-body-md text-[11px] sm:text-xs md:text-sm text-text-secondary leading-snug sm:leading-relaxed mb-3 sm:mb-6 line-clamp-3 sm:line-clamp-none">
+                                        ${card.description}
+                                    </p>
                                 </div>
-                                <h3 class="font-headline-md text-xl text-text-primary font-semibold mb-3">${card.title}</h3>
-                                <p class="font-body-md text-sm text-text-secondary leading-relaxed mb-6">
-                                    ${card.description}
-                                </p>
-                                <div class="flex flex-wrap gap-2">
+                                <div class="flex flex-wrap gap-1 sm:gap-2 mt-auto">
                                     ${tagsHtml}
                                 </div>
                             </div>

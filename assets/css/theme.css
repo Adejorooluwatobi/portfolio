@@ -57,6 +57,13 @@
     --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
 }
 
+/* Global Responsive Containment */
+html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw;
+    width: 100%;
+}
+
 /* Smooth background & text color transitions */
 body {
     transition: background-color 0.25s ease, color 0.25s ease;
@@ -64,4 +71,33 @@ body {
 
 header, footer, nav, .bg-surface-card, .bg-surface-container-low {
     transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+/* Project View Mode transitions */
+#projects-grid.view-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+}
+
+/* Mobile-friendly tag chips */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
