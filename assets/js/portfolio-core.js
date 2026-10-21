@@ -4,6 +4,47 @@
  * Dynamic API Hydration & Interactive Component Engine
  */
 
+/**
+ * Universal Rich-Text Formatting Engine
+ * Transforms custom formatting signs into styled HTML:
+ * - **bold** -> <strong>
+ * - ~~almost invisible~~ -> <span class="almost-invisible">
+ * - \italic\ or \\italic\\ or *italic* or _italic_ -> <em>
+ * - `code` -> <code>
+ */
+function formatRichText(raw) {
+    if (!raw || typeof raw !== 'string') return '';
+    
+    // 1. Sanitize raw HTML tags to prevent XSS
+    let safe = raw
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    
+    // 2. Inline Code: `code`
+    safe = safe.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-surface-container-high font-code-sm text-xs text-primary border border-border-subtle">$1</code>');
+
+    // 3. Bold: **text**
+    safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-text-primary">$1</strong>');
+
+    // 4. Almost Invisible (Ghost Text): ~~text~~
+    safe = safe.replace(/~~([^~]+)~~/g, '<span class="almost-invisible" title="Hover to reveal text">$1</span>');
+
+    // 5. Italic: \\text\\ or \text\ or *text* or _text_
+    safe = safe.replace(/\\\\([^\\]+)\\\\/g, '<em class="italic text-text-secondary">$1</em>');
+    safe = safe.replace(/\\([^\\]+)\\/g, '<em class="italic text-text-secondary">$1</em>');
+    safe = safe.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em class="italic text-text-secondary">$1</em>');
+    safe = safe.replace(/(?<!_)_([^_]+)_(?!_)/g, '<em class="italic text-text-secondary">$1</em>');
+
+    // 6. Double newlines to paragraph break, single newline to <br/>
+    safe = safe.replace(/\r\n/g, '\n');
+    safe = safe.replace(/\n\n+/g, '<br/><br/>');
+    safe = safe.replace(/\n/g, '<br/>');
+
+    return safe;
+}
+window.formatRichText = formatRichText;
+
 function initHeaderAndThemeListeners() {
     // Theme Toggle (Dark / Light mode)
     const themeToggleBtns = document.querySelectorAll('.theme-toggle-btn');
@@ -370,7 +411,7 @@ window.openProjectModal = async function(projectId) {
             <div class="p-4 rounded-xl bg-surface-container-lowest/60 border border-border-subtle mb-6">
                 <h4 class="font-code-sm text-xs text-text-muted uppercase tracking-wider mb-2 font-semibold">System Architecture & Overview</h4>
                 <p class="font-body-md text-sm text-text-secondary leading-relaxed">
-                    ${summary}
+                    ${formatRichText(summary)}
                 </p>
             </div>
 
@@ -384,7 +425,7 @@ window.openProjectModal = async function(projectId) {
                         ${highlights.map(f => `
                             <li class="flex items-start gap-2.5 font-body-sm text-sm text-text-secondary bg-surface-container/40 p-2.5 rounded-lg border border-border-subtle/50">
                                 <span class="material-symbols-outlined text-secondary text-[17px] shrink-0 mt-0.5">check_circle</span>
-                                <span class="leading-relaxed">${f}</span>
+                                <span class="leading-relaxed">${formatRichText(f)}</span>
                             </li>
                         `).join('')}
                     </ul>
@@ -575,7 +616,7 @@ window.openArticleModal = async function(idOrSlug) {
             </h3>
 
             <div class="font-body-md text-sm sm:text-base text-text-secondary leading-relaxed mb-6 space-y-3">
-                <p>${excerpt}</p>
+                <p>${formatRichText(excerpt)}</p>
             </div>
 
             ${tagsHtml ? `
@@ -739,7 +780,7 @@ function renderProjectsMarkup(projects, mode) {
                             </div>
                             <h3 class="font-headline-md text-base sm:text-lg text-text-primary font-bold truncate">${p.title}</h3>
                             <p class="font-body-sm text-xs sm:text-sm text-text-secondary line-clamp-1 sm:line-clamp-2 mt-0.5">
-                                ${p.shortDescription || ''}
+                                ${formatRichText(p.shortDescription || '')}
                             </p>
                             <div class="flex flex-wrap gap-1.5 mt-2">
                                 ${listTagsHtml}
@@ -794,7 +835,7 @@ function renderProjectsMarkup(projects, mode) {
                         <h2 class="font-headline-md text-xs sm:text-base md:text-xl text-text-primary font-bold line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] flex items-center">${p.title}</h2>
                     </div>
                     <p class="font-body-md text-[11px] sm:text-xs md:text-sm text-text-secondary mb-2 sm:mb-5 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-3">
-                        ${p.shortDescription || ''}
+                        ${formatRichText(p.shortDescription || '')}
                     </p>
                     <div class="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-6">
                         ${tagsHtml}
@@ -993,7 +1034,7 @@ function renderArticlesMarkup(articles, mode) {
                                 ${a.title}
                             </h2>
                             <p class="font-body-sm text-xs sm:text-sm text-text-secondary line-clamp-1 sm:line-clamp-2 mt-0.5">
-                                ${a.excerpt || ''}
+                                ${formatRichText(a.excerpt || '')}
                             </p>
                             <div class="flex flex-wrap gap-1.5 mt-2">
                                 ${listTagsHtml}
@@ -1036,7 +1077,7 @@ function renderArticlesMarkup(articles, mode) {
                         ${a.title}
                     </h2>
                     <p class="font-body-md text-[11px] sm:text-xs md:text-sm text-text-secondary mb-2 sm:mb-6 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-3">
-                        ${a.excerpt || ''}
+                        ${formatRichText(a.excerpt || '')}
                     </p>
                     <div class="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-6">
                         ${tagsHtml}
@@ -1175,7 +1216,7 @@ async function hydrateResumePage() {
                             </div>
                             <span class="font-code-sm text-xs text-primary block mb-3 font-medium">${exp.companyName} • ${exp.employmentType || 'Full-Time'}</span>
                             <p class="font-body-md text-sm text-text-secondary leading-relaxed mb-4">
-                                ${desc}
+                                ${formatRichText(desc)}
                             </p>
                             <div class="flex flex-wrap gap-2">
                                 ${techsHtml}
@@ -1250,22 +1291,22 @@ async function hydrateHomePage() {
         const profile = profileRes?.profile || profileRes;
 
         if (hero) {
-            if (hero.headline) heroHeadline.textContent = hero.headline;
+            if (hero.headline) heroHeadline.innerHTML = formatRichText(hero.headline);
             if (hero.categoryBadgeText) {
                 const badge = document.getElementById('hero-badge-text');
                 if (badge) badge.textContent = hero.categoryBadgeText;
             }
             if (hero.bioLead) {
                 const lead = document.getElementById('hero-bio-lead');
-                if (lead) lead.textContent = hero.bioLead;
+                if (lead) lead.innerHTML = formatRichText(hero.bioLead);
             }
             if (hero.bioFrontend) {
                 const fe = document.getElementById('hero-bio-frontend');
-                if (fe) fe.innerHTML = hero.bioFrontend;
+                if (fe) fe.innerHTML = formatRichText(hero.bioFrontend);
             }
             if (hero.bioBackend) {
                 const be = document.getElementById('hero-bio-backend');
-                if (be) be.innerHTML = hero.bioBackend;
+                if (be) be.innerHTML = formatRichText(hero.bioBackend);
             }
         }
 
@@ -1274,6 +1315,24 @@ async function hydrateHomePage() {
             if (profile.fullName) {
                 const nameEl = document.getElementById('hero-full-name');
                 if (nameEl) nameEl.textContent = profile.fullName;
+
+                const initials = typeof window.getInitialsFromName === 'function'
+                    ? window.getInitialsFromName(profile.fullName)
+                    : (() => {
+                        const p = profile.fullName.trim().split(/\s+/).filter(Boolean);
+                        return p.length === 1 ? p[0].slice(0, 2).toUpperCase() : (p[0][0] + p[1][0]).toUpperCase();
+                    })();
+
+                if (typeof window.setPortfolioFavicon === 'function') {
+                    window.setPortfolioFavicon(initials);
+                }
+
+                const brandEl = document.getElementById('header-brand-name');
+                if (brandEl) brandEl.textContent = profile.fullName;
+
+                const currentTitle = document.title;
+                const rolePart = currentTitle.includes('—') ? currentTitle.split('—')[1] : (profile.primaryTitle || 'Senior Fullstack Software Engineer');
+                document.title = `${profile.fullName} — ${rolePart.trim()}`;
             }
             if (profile.primaryTitle) {
                 const titleEl = document.getElementById('hero-primary-title');
@@ -1367,7 +1426,7 @@ async function hydrateHomePage() {
                                     </div>
                                     <h3 class="font-headline-md text-sm sm:text-lg md:text-xl text-text-primary font-semibold mb-1.5 sm:mb-3 line-clamp-2 min-h-[2.2rem] sm:min-h-[2.8rem] flex items-center">${card.title}</h3>
                                     <p class="font-body-md text-[11px] sm:text-xs md:text-sm text-text-secondary leading-snug sm:leading-relaxed mb-3 sm:mb-6 line-clamp-3 sm:line-clamp-none">
-                                        ${card.description}
+                                        ${formatRichText(card.description || '')}
                                     </p>
                                 </div>
                                 <div class="flex flex-wrap gap-1 sm:gap-2 mt-auto">
@@ -1395,7 +1454,7 @@ async function hydrateHomePage() {
                                     <span class="material-symbols-outlined text-[22px]">${card.icon || 'speed'}</span>
                                 </div>
                                 <h3 class="font-headline-sm text-base text-text-primary font-semibold mb-1">${card.title || ''}</h3>
-                                <p class="font-body-sm text-xs text-text-muted leading-relaxed">${card.description || ''}</p>
+                                <p class="font-body-sm text-xs text-text-muted leading-relaxed">${formatRichText(card.description || '')}</p>
                             </div>
                         `;
                     }).join('');

@@ -13,7 +13,7 @@
         <div class="flex items-center gap-2.5 sm:gap-4 min-w-0">
             <a class="group flex items-center gap-2.5 sm:gap-3 min-w-0" href="index.html">
                 <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-surface-container-high flex-shrink-0 flex items-center justify-center transition-colors group-hover:bg-primary-container border border-border-subtle">
-                    <span class="font-code-md text-primary font-bold group-hover:text-on-primary-container">OA</span>
+                    <span id="header-brand-monogram" class="font-code-md text-primary font-bold group-hover:text-on-primary-container">OA</span>
                 </div>
                 <div class="flex flex-col min-w-0">
                     <span id="header-brand-name" class="font-headline-sm text-text-primary leading-tight font-semibold text-sm sm:text-base truncate">Oluwatobi Adejoro</span>
@@ -65,7 +65,7 @@
     <div>
         <div class="flex items-center justify-between pb-6 border-b border-border-subtle mb-6">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container font-bold font-code-md">OA</div>
+                <div id="mobile-brand-monogram" class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container font-bold font-code-md">OA</div>
                 <span class="font-headline-sm text-text-primary font-semibold">Menu</span>
             </div>
             <button id="mobile-menu-close" type="button" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-text-muted hover:text-text-primary">
@@ -210,18 +210,141 @@
         });
     }
 
+    /**
+     * Dynamic Favicon Generator & Real-Time Logo Synchronizer
+     * Automatically generates vector SVG / Canvas favicon from monogram text (e.g. OA, AO)
+     */
+    let isUpdatingFaviconLogo = false;
+
+    function generateFaviconSvgDataUri(monogram) {
+        const text = (monogram || 'OA').trim().slice(0, 3).toUpperCase();
+        const fontSize = text.length > 2 ? 22 : 28;
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><defs><linearGradient id="oa-bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient></defs><rect x="1" y="1" width="62" height="62" rx="15" fill="url(#oa-bg)" stroke="rgba(255,255,255,0.2)" stroke-width="2"/><text x="50%" y="54%" font-family="'JetBrains Mono', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace" font-size="${fontSize}" font-weight="800" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" letter-spacing="-0.5">${text}</text></svg>`;
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    function generateFaviconCanvasDataUri(monogram) {
+        try {
+            const text = (monogram || 'OA').trim().slice(0, 3).toUpperCase();
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return null;
+
+            const rx = 15;
+            ctx.beginPath();
+            ctx.moveTo(rx, 0);
+            ctx.lineTo(64 - rx, 0);
+            ctx.quadraticCurveTo(64, 0, 64, rx);
+            ctx.lineTo(64, 64 - rx);
+            ctx.quadraticCurveTo(64, 64, 64 - rx, 64);
+            ctx.lineTo(rx, 64);
+            ctx.quadraticCurveTo(0, 64, 0, 64 - rx);
+            ctx.lineTo(0, rx);
+            ctx.quadraticCurveTo(0, 0, rx, 0);
+            ctx.closePath();
+
+            const grad = ctx.createLinearGradient(0, 0, 64, 64);
+            grad.addColorStop(0, '#2563eb');
+            grad.addColorStop(1, '#1d4ed8');
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `800 ${text.length > 2 ? '22px' : '28px'} "JetBrains Mono", -apple-system, BlinkMacSystemFont, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, 32, 35);
+
+            return canvas.toDataURL('image/png');
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function updateDynamicFavicon(monogram) {
+        const text = (monogram || 'OA').trim().slice(0, 3).toUpperCase();
+        const svgUri = generateFaviconSvgDataUri(text);
+        const pngUri = generateFaviconCanvasDataUri(text);
+
+        let svgIcon = document.querySelector('link[rel="icon"][type="image/svg+xml"]');
+        if (!svgIcon) {
+            svgIcon = document.createElement('link');
+            svgIcon.rel = 'icon';
+            svgIcon.type = 'image/svg+xml';
+            document.head.appendChild(svgIcon);
+        }
+        svgIcon.href = svgUri;
+
+        let pngIcon = document.querySelector('link[rel="alternate icon"], link[rel="shortcut icon"], link[rel="icon"]:not([type="image/svg+xml"])');
+        if (!pngIcon) {
+            pngIcon = document.createElement('link');
+            pngIcon.rel = 'alternate icon';
+            pngIcon.type = 'image/png';
+            document.head.appendChild(pngIcon);
+        }
+        pngIcon.href = pngUri || svgUri;
+    }
+
+    function initFaviconLogoObserver() {
+        const monogramEl = document.getElementById('header-brand-monogram') || document.querySelector('.font-code-md.text-primary');
+        if (!monogramEl) return;
+
+        const initial = monogramEl.textContent.trim();
+        if (initial) {
+            updateDynamicFavicon(initial);
+        }
+
+        const observer = new MutationObserver(() => {
+            if (isUpdatingFaviconLogo) return;
+            const updated = monogramEl.textContent.trim();
+            if (updated) {
+                updateDynamicFavicon(updated);
+            }
+        });
+
+        observer.observe(monogramEl, { childList: true, characterData: true, subtree: true });
+    }
+
+    window.setPortfolioFavicon = function(monogram) {
+        if (!monogram) return;
+        const clean = monogram.trim().slice(0, 3).toUpperCase();
+        isUpdatingFaviconLogo = true;
+        document.querySelectorAll('#header-brand-monogram, #mobile-brand-monogram, .font-code-md.text-primary, #mobile-menu-drawer .font-code-md').forEach(el => {
+            el.textContent = clean;
+        });
+        const fallbackEl = document.getElementById('hero-avatar-fallback');
+        if (fallbackEl) fallbackEl.textContent = clean;
+        isUpdatingFaviconLogo = false;
+        updateDynamicFavicon(clean);
+    };
+
+    function getInitialsFromName(name) {
+        if (!name) return 'OA';
+        const parts = name.trim().split(/\s+/).filter(Boolean);
+        if (parts.length === 0) return 'OA';
+        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    window.getInitialsFromName = getInitialsFromName;
+
     async function hydrateNavigationComponents() {
         if (!window.PortfolioApi) return;
         try {
             const nav = await window.PortfolioApi.getNavigation();
             if (!nav) return;
 
-            // Brand Monogram
-            if (nav.monogram) {
-                document.querySelectorAll('.font-code-md.text-primary, #mobile-menu-drawer .font-code-md').forEach(el => {
-                    el.textContent = nav.monogram;
-                });
-            }
+            // Brand Monogram & Favicon Sync
+            // Compute monogram from full name so name changes (e.g. Adejoro Oluwatobi -> AO) immediately update both logo and tab favicon
+            const resolvedMonogram = nav.fullName 
+                ? getInitialsFromName(nav.fullName) 
+                : (nav.monogram || 'OA');
+            window.setPortfolioFavicon(resolvedMonogram);
 
             // Full Name & Title
             if (nav.fullName) {
@@ -230,6 +353,9 @@
                 document.querySelectorAll('header .font-headline-sm.text-text-primary, #mobile-menu-drawer .font-headline-sm.text-text-primary').forEach(el => {
                     el.textContent = nav.fullName;
                 });
+                const currentTitle = document.title;
+                const rolePart = currentTitle.includes('—') ? currentTitle.split('—')[1] : (nav.primaryTitle || 'Senior Fullstack Software Engineer');
+                document.title = `${nav.fullName} — ${rolePart.trim()}`;
             }
             if (nav.primaryTitle) {
                 const titleEl = document.getElementById('header-primary-title');
@@ -285,6 +411,7 @@
         ]);
 
         setActiveNavigation();
+        initFaviconLogoObserver();
         await hydrateNavigationComponents();
 
         // Safe CV download click handler (if clicked before hydration completes or during cold-start)
@@ -319,9 +446,10 @@
             }
         });
 
-        // SWR live update listener for navigation
+        // SWR live update listener for navigation & profile updates
         window.addEventListener('portfolio:data-updated', (event) => {
-            if (event.detail?.endpoint === '/Navigation') {
+            const ep = event.detail?.endpoint;
+            if (ep === '/Navigation' || ep === '/Profile' || ep === '/Profile/hero') {
                 hydrateNavigationComponents();
             }
         });
