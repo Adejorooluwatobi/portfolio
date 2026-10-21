@@ -1,67 +1,75 @@
-/* Theme variables for Light & Dark mode */
+﻿/* Fourdigitcore Theme variables: Inspired by axogenesis.com (Monochrome + Electric Blue) */
 :root {
-    --color-surface: #f8fafc;
-    --color-surface-card: rgba(255, 255, 255, 0.90);
-    --color-surface-container: #f1f5f9;
-    --color-surface-container-low: #f8fafc;
+    --color-surface: #ffffff;
+    --color-surface-card: rgba(255, 255, 255, 0.95);
+    --color-surface-container: #f4f4f5;
+    --color-surface-container-low: #fafafa;
     --color-surface-container-lowest: #ffffff;
-    --color-surface-container-high: #e2e8f0;
-    --color-surface-container-highest: #cbd5e1;
-    --color-on-surface: #0f172a;
-    --color-on-surface-variant: #475569;
-    --color-text-primary: #0f172a;
-    --color-text-secondary: #334155;
-    --color-text-muted: #64748b;
-    --color-primary: #6d28d9;
-    --color-primary-container: #7c3aed;
+    --color-surface-container-high: #e4e4e7;
+    --color-surface-container-highest: #d4d4d8;
+    --color-on-surface: #09090b;
+    --color-on-surface-variant: #52525b;
+    --color-text-primary: #09090b;
+    --color-text-secondary: #52525b;
+    --color-text-muted: #71717a;
+    --color-primary: #0284c7;
+    --color-primary-container: #09090b;
     --color-on-primary-container: #ffffff;
-    --color-secondary: #059669;
-    --color-tertiary: #0284c7;
-    --color-tertiary-container: #e0f2fe;
-    --color-border-subtle: rgba(15, 23, 42, 0.08);
-    --color-border-accent: rgba(124, 58, 237, 0.25);
-    --color-error: #dc2626;
+    --color-secondary: #2563eb;
+    --color-tertiary: #38bdf8;
+    --color-tertiary-container: #eff6ff;
+    --color-border-subtle: rgba(9, 9, 11, 0.08);
+    --color-border-accent: rgba(37, 99, 235, 0.35);
+    --color-error: #ef4444;
     --header-bg: rgba(255, 255, 255, 0.88);
-    --footer-bg: rgba(248, 250, 252, 0.95);
-    --ambient-glow-1: rgba(124, 58, 237, 0.08);
-    --ambient-glow-2: rgba(2, 132, 199, 0.06);
-    --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+    --footer-bg: rgba(250, 250, 250, 0.95);
+    --ambient-glow-1: rgba(37, 99, 235, 0.06);
+    --ambient-glow-2: rgba(56, 189, 248, 0.05);
+    --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06);
 }
 
 .dark {
-    --color-surface: #0b1326;
-    --color-surface-card: rgba(15, 23, 42, 0.70);
-    --color-surface-container: #171f33;
-    --color-surface-container-low: #131b2e;
-    --color-surface-container-lowest: #060e20;
-    --color-surface-container-high: #222a3d;
-    --color-surface-container-highest: #2d3449;
-    --color-on-surface: #dae2fd;
-    --color-on-surface-variant: #ccc3d8;
-    --color-text-primary: #F8FAFC;
-    --color-text-secondary: #94A3B8;
-    --color-text-muted: #64748B;
-    --color-primary: #d2bbff;
-    --color-primary-container: #7c3aed;
-    --color-on-primary-container: #ede0ff;
-    --color-secondary: #4edea3;
-    --color-tertiary: #7bd0ff;
-    --color-tertiary-container: #006e95;
+    /* Axogenesis Deep Obsidian Ink */
+    --color-surface: #08080a;
+    --color-surface-card: rgba(14, 14, 18, 0.78);
+    --color-surface-container: #121216;
+    --color-surface-container-low: #0e0e11;
+    --color-surface-container-lowest: #050507;
+    --color-surface-container-high: #1c1c22;
+    --color-surface-container-highest: #282830;
+    --color-on-surface: #f4f4f6;
+    --color-on-surface-variant: #b4b4bb;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #a1a1aa;
+    --color-text-muted: #71717a;
+    
+    /* 6174 Electric Blue Signature Accent */
+    --color-primary: #38bdf8;
+    --color-primary-container: #2563eb;
+    --color-on-primary-container: #ffffff;
+    --color-secondary: #60a5fa;
+    --color-tertiary: #93c5fd;
+    --color-tertiary-container: rgba(37, 99, 235, 0.15);
+    
     --color-border-subtle: rgba(255, 255, 255, 0.08);
-    --color-border-accent: rgba(124, 58, 237, 0.35);
-    --color-error: #ffb4ab;
-    --header-bg: rgba(11, 19, 38, 0.88);
-    --footer-bg: rgba(6, 14, 32, 0.90);
-    --ambient-glow-1: rgba(124, 58, 237, 0.15);
-    --ambient-glow-2: rgba(0, 110, 149, 0.10);
-    --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    --color-border-accent: rgba(56, 189, 248, 0.40);
+    --color-error: #f87171;
+    --header-bg: rgba(8, 8, 10, 0.82);
+    --footer-bg: rgba(5, 5, 7, 0.95);
+    --ambient-glow-1: rgba(37, 99, 235, 0.14);
+    --ambient-glow-2: rgba(56, 189, 248, 0.09);
+    --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
 }
 
-/* Global Responsive Containment */
-html, body {
-    overflow-x: hidden !important;
-    max-width: 100vw;
-    width: 100%;
+/* Subtle Engineering Grid Backdrop for Dark Mode */
+.dark body {
+    background-color: var(--color-surface);
+    background-image: 
+        radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 48px 48px, 48px 48px;
+    background-repeat: no-repeat, repeat, repeat;
 }
 
 /* Smooth background & text color transitions */
@@ -73,31 +81,3 @@ header, footer, nav, .bg-surface-card, .bg-surface-container-low {
     transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
-/* Project View Mode transitions */
-#projects-grid.view-list {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 16px !important;
-}
-
-/* Mobile-friendly tag chips */
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.line-clamp-4 {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
