@@ -1,4 +1,4 @@
-﻿/* Fourdigitcore Theme variables: Inspired by axogenesis.com (Monochrome + Electric Blue) */
+/* Fourdigitcore Theme variables: Inspired by axogenesis.com (Monochrome + Electric Blue) */
 :root {
     --color-surface: #ffffff;
     --color-surface-card: rgba(255, 255, 255, 0.95);
@@ -80,4 +80,15 @@ body {
 header, footer, nav, .bg-surface-card, .bg-surface-container-low {
     transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
+
+/* Custom Formatting: Almost Invisible Ghost Text */
+.almost-invisible {
+    opacity: 0.20;
+    transition: opacity 0.25s ease;
+    cursor: default;
+}
+.almost-invisible:hover {
+    opacity: 0.90;
+}
+
 
