@@ -5,13 +5,30 @@
  */
 
 (function() {
+    // Immediate Address Bar Clean URL Enforcer (Strips .html / index.html from URL without reload)
+    (function enforceCleanUrl() {
+        if (!window.location.protocol.startsWith('http')) return;
+        const path = window.location.pathname;
+        let cleanPath = path;
+
+        if (cleanPath.endsWith('/index.html')) {
+            cleanPath = cleanPath.slice(0, -10) || '/'; // leaves trailing slash, e.g. /portfolio/ or /
+        } else if (cleanPath.endsWith('.html')) {
+            cleanPath = cleanPath.slice(0, -5); // removes .html, e.g. /portfolio/articles
+        }
+
+        if (cleanPath !== path) {
+            window.history.replaceState(null, '', cleanPath + window.location.search + window.location.hash);
+        }
+    })();
+
     const HEADER_TEMPLATE = `<!-- Top Persistent Navigation Bar -->
 <header class="fixed top-0 left-0 right-0 z-50 bg-surface/85 backdrop-blur-xl border-b border-border-subtle">
     <div class="h-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-3 sm:gap-4">
         
         <!-- Brand & Availability -->
         <div class="flex items-center gap-2.5 sm:gap-4 min-w-0">
-            <a class="group flex items-center gap-2.5 sm:gap-3 min-w-0" href="index.html">
+            <a class="group flex items-center gap-2.5 sm:gap-3 min-w-0" href="./">
                 <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-surface-container-high flex-shrink-0 flex items-center justify-center transition-colors group-hover:bg-primary-container border border-border-subtle">
                     <span id="header-brand-monogram" class="font-code-md text-primary font-bold group-hover:text-on-primary-container">OA</span>
                 </div>
@@ -28,11 +45,11 @@
 
         <!-- Multi-Page Navigation Links -->
         <nav class="hidden lg:flex items-center gap-1 bg-surface-container-low/80 p-1.5 rounded-xl border border-border-subtle" id="nav-links">
-            <a class="nav-item px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-sm font-medium" data-page="index.html" href="index.html">About</a>
-            <a class="nav-item px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-sm font-medium" data-page="resume.html" href="resume.html">Resume & Skills</a>
-            <a class="nav-item px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-sm font-medium" data-page="portfolio.html" href="portfolio.html">Featured Works</a>
-            <a class="nav-item px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-sm font-medium" data-page="articles.html" href="articles.html">Articles</a>
-            <a class="nav-item px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-sm font-medium" data-page="contact.html" href="contact.html">Contact</a>
+            <a class="nav-item px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-sm font-medium" data-page="index" href="./">About</a>
+            <a class="nav-item px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-sm font-medium" data-page="resume" href="resume">Resume & Skills</a>
+            <a class="nav-item px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-sm font-medium" data-page="portfolio" href="portfolio">Featured Works</a>
+            <a class="nav-item px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-sm font-medium" data-page="articles" href="articles">Articles</a>
+            <a class="nav-item px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-sm font-medium" data-page="contact" href="contact">Contact</a>
         </nav>
 
         <!-- Actions: Socials, CV Download, Theme Toggle, Mobile Menu Button -->
@@ -73,23 +90,23 @@
             </button>
         </div>
         <nav class="flex flex-col gap-2" id="mobile-nav-links">
-            <a class="mobile-nav-item px-4 py-3 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center justify-between" data-page="index.html" href="index.html">
+            <a class="mobile-nav-item px-4 py-3 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center justify-between" data-page="index" href="./">
                 <span>About Overview</span>
                 <span class="material-symbols-outlined text-[18px]">person</span>
             </a>
-            <a class="mobile-nav-item px-4 py-3 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center justify-between" data-page="resume.html" href="resume.html">
+            <a class="mobile-nav-item px-4 py-3 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center justify-between" data-page="resume" href="resume">
                 <span>Resume & Skills</span>
                 <span class="material-symbols-outlined text-[18px]">description</span>
             </a>
-            <a class="mobile-nav-item px-4 py-3 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center justify-between" data-page="portfolio.html" href="portfolio.html">
+            <a class="mobile-nav-item px-4 py-3 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center justify-between" data-page="portfolio" href="portfolio">
                 <span>Featured Works</span>
                 <span class="material-symbols-outlined text-[18px]">layers</span>
             </a>
-            <a class="mobile-nav-item px-4 py-3 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center justify-between" data-page="articles.html" href="articles.html">
+            <a class="mobile-nav-item px-4 py-3 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center justify-between" data-page="articles" href="articles">
                 <span>Articles & Insights</span>
                 <span class="material-symbols-outlined text-[18px]">edit_note</span>
             </a>
-            <a class="mobile-nav-item px-4 py-3 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center justify-between" data-page="contact.html" href="contact.html">
+            <a class="mobile-nav-item px-4 py-3 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center justify-between" data-page="contact" href="contact">
                 <span>Contact Inquiries</span>
                 <span class="material-symbols-outlined text-[18px]">mail</span>
             </a>
@@ -179,15 +196,23 @@
 
     function setActiveNavigation() {
         const currentPath = window.location.pathname.toLowerCase();
-        let page = currentPath.split('/').pop() || 'index.html';
-        if (page === '' || page === 'index') page = 'index.html';
-        if (page === 'blog.html') page = 'articles.html';
+        let page = currentPath.split('/').pop() || 'index';
+        if (page.endsWith('.html')) page = page.slice(0, -5);
+        if (page === '' || page === 'index') page = 'index';
+        if (page === 'blog') page = 'articles';
+
+        function isPageMatch(link) {
+            let linkPage = (link.getAttribute('data-page') || link.getAttribute('href') || '').toLowerCase();
+            if (linkPage.endsWith('.html')) linkPage = linkPage.slice(0, -5);
+            if (linkPage.startsWith('./')) linkPage = linkPage.slice(2);
+            if (linkPage === '' || linkPage === 'index') linkPage = 'index';
+            return linkPage === page;
+        }
 
         // Desktop links
         const navLinks = document.querySelectorAll('.nav-item');
         navLinks.forEach(link => {
-            const linkPage = link.getAttribute('data-page') || link.getAttribute('href');
-            if (linkPage === page) {
+            if (isPageMatch(link)) {
                 link.className = 'nav-item px-3.5 py-1.5 transition-colors bg-primary-container text-on-primary-container font-semibold rounded-lg text-sm';
                 link.setAttribute('aria-current', 'page');
             } else {
@@ -199,8 +224,7 @@
         // Mobile links
         const mobileNavLinks = document.querySelectorAll('.mobile-nav-item');
         mobileNavLinks.forEach(link => {
-            const linkPage = link.getAttribute('data-page') || link.getAttribute('href');
-            if (linkPage === page) {
+            if (isPageMatch(link)) {
                 link.className = 'mobile-nav-item px-4 py-3 rounded-lg bg-primary-container text-on-primary-container font-semibold text-sm flex items-center justify-between';
                 link.setAttribute('aria-current', 'page');
             } else {
@@ -411,6 +435,24 @@
         ]);
 
         setActiveNavigation();
+
+        // Local file:// protocol compatibility guard (appends .html if opened directly from local disk)
+        if (window.location.protocol === 'file:') {
+            document.querySelectorAll('a[href]').forEach(a => {
+                const href = a.getAttribute('href');
+                if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:') && !href.startsWith('tel:') && !href.includes('.html')) {
+                    if (href === './') {
+                        a.setAttribute('href', 'index.html');
+                    } else if (href.includes('#')) {
+                        const [p, h] = href.split('#');
+                        a.setAttribute('href', p + '.html#' + h);
+                    } else {
+                        a.setAttribute('href', href + '.html');
+                    }
+                }
+            });
+        }
+
         initFaviconLogoObserver();
         await hydrateNavigationComponents();
 
