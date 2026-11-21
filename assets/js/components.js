@@ -177,21 +177,26 @@
         const container = document.getElementById(elementId);
         if (!container) return;
 
+        // Populate inline fallback immediately if container is empty (0ms initial render)
+        if (!container.innerHTML.trim() && inlineFallback) {
+            container.innerHTML = inlineFallback;
+        }
+
         // Try fetch if served via HTTP/HTTPS
         if (window.location.protocol.startsWith('http')) {
             try {
                 const res = await fetch(externalFile);
                 if (res.ok) {
-                    container.innerHTML = await res.text();
+                    const text = await res.text();
+                    if (text && container.innerHTML !== text) {
+                        container.innerHTML = text;
+                    }
                     return;
                 }
             } catch (e) {
-                // Network or CORS issue; fallback to inline template
+                // Network or CORS issue; fallback template is already active
             }
         }
-
-        // Instant fallback for local file:// protocol
-        container.innerHTML = inlineFallback;
     }
 
     function setActiveNavigation() {
@@ -454,7 +459,47 @@
         }
 
         initFaviconLogoObserver();
-        await hydrateNavigationComponents();
+
+        // 1. Dispatch components:ready IMMEDIATELY so UI listeners (hamburger, theme) attach without waiting on backend!
+        document.dispatchEvent(new CustomEvent('components:ready'));
+
+        // 2. Hydrate dynamic backend navigation asynchronously in the background (NON-BLOCKING)
+        hydrateNavigationComponents().catch(err => {
+            console.debug('[components.js] Background navigation hydration deferred:', err.message);
+        });
+
+        // 3. Global Delegated Click Handler for Mobile Drawer (Indestructible: works from ms 0, offline, or online)
+        document.addEventListener('click', (e) => {
+            // Mobile Hamburger Open
+            const toggleBtn = e.target.closest('#mobile-menu-toggle');
+            if (toggleBtn) {
+                e.preventDefault();
+                const drawer = document.getElementById('mobile-menu-drawer');
+                const backdrop = document.getElementById('mobile-menu-backdrop');
+                if (drawer) drawer.classList.remove('translate-x-full');
+                if (backdrop) {
+                    backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                    backdrop.classList.add('opacity-100');
+                }
+                document.body.style.overflow = 'hidden';
+                return;
+            }
+
+            // Mobile Hamburger Close (Close button, dark backdrop, or mobile nav link tap)
+            const closeBtn = e.target.closest('#mobile-menu-close');
+            const backdrop = e.target.closest('#mobile-menu-backdrop');
+            const mobileLink = e.target.closest('#mobile-nav-links a');
+            if (closeBtn || backdrop || mobileLink) {
+                const drawer = document.getElementById('mobile-menu-drawer');
+                const backdropEl = document.getElementById('mobile-menu-backdrop');
+                if (drawer) drawer.classList.add('translate-x-full');
+                if (backdropEl) {
+                    backdropEl.classList.add('opacity-0', 'pointer-events-none');
+                    backdropEl.classList.remove('opacity-100');
+                }
+                document.body.style.overflow = '';
+            }
+        });
 
         // Safe CV download click handler (if clicked before hydration completes or during cold-start)
         document.addEventListener('click', async (e) => {
@@ -495,9 +540,6 @@
                 hydrateNavigationComponents();
             }
         });
-
-        // Dispatch event so portfolio-core.js binds handlers to newly inserted DOM elements
-        document.dispatchEvent(new CustomEvent('components:ready'));
     }
 
     if (document.readyState === 'loading') {
